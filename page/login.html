@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>敬请期待</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: -25px;
+            z-index: -2;
+            background: url("../image/background.jpg") center/cover no-repeat;
+            filter: blur(25px);
+            transform: scale(1.05);
+        }
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: rgba(0, 0, 0, 0.42);
+            pointer-events: none;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        /* 顶部导航 */
+        header {
+            position: fixed;
+            inset: 0 0 auto;
+            background: rgba(40, 40, 40, 0.25);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            z-index: 100;
+        }
+        .navbar {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+        .nav-container {
+            flex: 1;
+            text-align: center;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            list-style: none;
+        }
+        .nav-links a, .login-btn {
+            color: #eee;
+            text-decoration: none;
+            border: 1px solid #fff;
+            border-radius: 99px;
+            padding: 6px 14px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover, .login-btn:hover {
+            color: #fff;
+            box-shadow: 0 0 8px rgba(255,255,255), 0 0 18px rgba(255,255,255);
+        }
+        .login-btn {
+            background: rgba(255, 255, 255, 0.15);
+            white-space: nowrap;
+        }
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        /* 主体 */
+        main {
+            text-align: center;
+            padding: 180px 0;
+            font-size: 1.4rem;
+        }
+
+        /* ========== 移动端侧边栏抽屉 ========== */
+        .mobile-drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 199;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .mobile-drawer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .mobile-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            max-width: 80vw;
+            height: 100%;
+            background: rgba(8, 9, 18, 0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
+            z-index: 200;
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5);
+        }
+        .mobile-drawer.active {
+            transform: translateX(0);
+        }
+        .mobile-drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .mobile-drawer-logo {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+        .mobile-drawer-close {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: all 0.3s ease;
+        }
+        .mobile-drawer-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+        .mobile-drawer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .mobile-drawer-links li a {
+            display: block;
+            padding: 14px 16px;
+            color: #eee;
+            text-decoration: none;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .mobile-drawer-links li a:hover {
+            background: rgba(40, 40, 40, 0.35);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 58px;
+            }
+            .navbar {
+                height: 58px;
+                position: relative;
+            }
+            .logo-img {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                height: 32px;
+            }
+            .nav-container {
+                display: none;
+            }
+            .mobile-menu-btn {
+                order: 1;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 36px;
+                height: 36px;
+                background: transparent;
+                color: #fff;
+                border: 1px solid rgba(255, 255, 255, 0.35);
+                border-radius: 10px;
+                font-size: 1.25rem;
+                cursor: pointer;
+            }
+            .login-btn {
+                order: 3;
+                margin-left: auto;
+                padding: 6px 13px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container navbar">
+            <a href="../index.html"><img src="../logo.png" alt="Logo" class="logo-img"></a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="打开菜单">&#9776;</button>
+            <div class="nav-container">
+                <ul class="nav-links" id="navLinks"></ul>
+            </div>
+            <a href="login.html" class="login-btn">登录</a>
+        </div>
+    </header>
+
+    <!-- 移动端侧边栏遮罩 -->
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay"></div>
+
+    <!-- 移动端侧边栏抽屉（从左向右滑出） -->
+    <nav class="mobile-drawer" id="mobileDrawer" aria-label="移动端导航菜单">
+        <div class="mobile-drawer-header">
+            <img src="../logo.png" alt="Logo" class="mobile-drawer-logo">
+            <button class="mobile-drawer-close" id="mobileDrawerClose" aria-label="关闭菜单">&times;</button>
+        </div>
+        <ul class="mobile-drawer-links">
+            <li><a href="../index.html">首页</a></li>
+            <li><a href="../index.html#how-develop">网站开发</a></li>
+            <li><a href="../index.html#public-resources">公共资源</a></li>
+            <li><a href="introduce_developer.html">了解此网站的开发者</a></li>
+            <li><a href="../index.html#minecraft">minecraft服务器</a></li>
+            <li><a href="../index.html#video">我们的社交媒体</a></li>
+        </ul>
+    </nav>
+
+    <main>开发中，敬请期待，欢迎加入开发！</main>
+
+    <script>
+        // 桌面端导航链接
+        const navItems = [
+            ['../index.html', '首页'],
+            ['../index.html#how-develop', '网站开发'],
+            ['../index.html#public-resources', '公共资源'],
+            ['introduce_developer.html', '了解此网站的开发者'],
+            ['../index.html#minecraft', 'minecraft服务器'],
+            ['../index.html#video', '我们的社交媒体']
+        ];
+        const navList = document.getElementById('navLinks');
+        if (navList) {
+            navList.innerHTML = navItems.map(([h, t]) => `<li><a href="${h}">${t}</a></li>`).join('');
+        }
+
+        // 移动端侧边栏抽屉
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDrawer = document.getElementById('mobileDrawer');
+        const mobileDrawerOverlay = document.getElementById('mobileDrawerOverlay');
+        const mobileDrawerClose = document.getElementById('mobileDrawerClose');
+
+        function openDrawer() {
+            mobileDrawer.classList.add('active');
+            mobileDrawerOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeDrawer() {
+            mobileDrawer.classList.remove('active');
+            mobileDrawerOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        mobileMenuBtn.addEventListener('click', openDrawer);
+        mobileDrawerClose.addEventListener('click', closeDrawer);
+        mobileDrawerOverlay.addEventListener('click', closeDrawer);
+        document.querySelectorAll('.mobile-drawer-links a').forEach(link => {
+            link.addEventListener('click', closeDrawer);
+        });
+    </script>
+</body>
+</html>

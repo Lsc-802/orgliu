@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="OUR MC">
+    <title>OUR MC</title>
+    <style>
+        /* ========== 自定义 Minecraft 字体（必须放在样式表顶层，不能嵌套在 @media 内） ========== */
+        @font-face {
+            font-family: "minecraftttf";
+            src: url("../fonts/minecraftttf.ttf") format("truetype");
+            font-weight: bolder;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            --bg-overlay: rgba(30, 30, 30, 0.2);
+            --bg-overlay-hover: rgba(40, 40, 40, 0.35);
+            --border-light: 1px solid rgba(255, 255, 255, 0.12);
+            --border-solid-white: 1px solid rgba(255, 255, 255);
+            --blur-strong: blur(24px) saturate(180%);
+            --blur-medium: blur(22px) saturate(170%);
+            --blur-light: blur(12px);
+            --shadow-white-glow: 0 0 12px rgba(255,255,255);
+            --shadow-card: 0 8px 32px rgba(0,0,0,0.3);
+            --inner-highlight: inset 0 1px 0 rgba(255,255,255,0.08);
+            --inner-white: inset 0 0 6px rgba(255,255,255);
+            --transition-base: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            color: #fff;
+            background-color: #000;
+            line-height: 1.6;
+            padding-top: 80px;
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+            /* 启用自定义 Minecraft 字体，fallback 到无衬线体 */
+            font-family: "minecraftttf", "Microsoft YaHei", sans-serif;
+            font-weight: bold;
+        }
+        body::before{
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("./image/background.jpg");
+            background-size: cover;      /* 图片铺满屏幕 */
+            background-position: center; /* 图片居中 */
+            background-repeat: no-repeat;
+            filter: blur(10px);
+            transform: scale(1.1);
+            z-index: -1; /* 放到最底层，不会盖住页面文字按钮 */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 顶部导航 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(40, 40, 40, 0.25);
+            backdrop-filter: var(--blur-strong);
+            -webkit-backdrop-filter: var(--blur-strong);
+            border-bottom: var(--border-light);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), var(--inner-highlight);
+        }
+        .navbar {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            gap: 20px;
+        }
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+        .logo-img:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(var(--shadow-white-glow));
+        }
+        .nav-container {
+            display: flex;
+            flex: 1;
+            justify-content: center;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-links a {
+            color: #eee;
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 14px;
+            border: var(--border-solid-white);
+            border-radius: 99px;
+            transition: var(--transition-base);
+            white-space: nowrap;
+        }
+        .nav-links a:hover {
+            color: #fff;
+            box-shadow: 0 0 8px rgba(255,255,255), 0 0 18px rgba(255,255,255), var(--inner-white);
+            text-shadow: 0 0 10px rgba(255,255,255);
+            transform: translateY(-2px);
+        }
+        .mobile-menu-btn, .mobile-bottom-nav { display: none; }
+
+        /* 登录按钮 */
+        .login-btn {
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            color: #fff;
+            border: var(--border-solid-white);
+            border-radius: 99px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition-base);
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.95rem;
+            box-shadow: var(--inner-highlight);
+        }
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.28);
+            box-shadow: 0 0 10px rgba(255,255,255),0 0 24px rgba(255,255,255), var(--inner-white);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        /* 视频头部容器 */
+        .hero-video-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            margin-top: 0;
+            padding-top: 80px;
+        }
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border: none;
+            outline: none;
+        }
+        /* 底部渐变过渡遮罩 */
+        .hero-video-container::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 0%,
+                rgba(0, 0, 0, 0.5) 40%,
+                rgba(0, 0, 0, 1) 100%
+            );
+            z-index: 2;
+            pointer-events: none;
+        }
+        .carousel-title {
+            position: absolute;
+            left: 50%;
+            top: 40%;
+            transform: translate(-50%, -50%);
+            z-index: 15;
+            font-size: 8rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            white-space: nowrap;
+        }
+        .explore-btn {
+            position: absolute;
+            left: 50%;
+            top: 65%;
+            transform: translate(-50%, -50%);
+            z-index: 15;
+            padding: 14px 36px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffffff;
+            background: var(--bg-overlay);
+            backdrop-filter: var(--blur-medium);
+            -webkit-backdrop-filter: var(--blur-medium);
+            border: var(--border-solid-white);
+            border-radius: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-card), var(--inner-highlight);
+        }
+        .explore-btn:hover {
+            background: var(--bg-overlay-hover);
+            box-shadow: 0 0 20px rgba(255,255,255), var(--shadow-card), var(--inner-highlight);
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        /* 内容区块 */
+        .section {
+            padding: 80px 0;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .card {
+            background: var(--bg-overlay);
+            backdrop-filter: var(--blur-medium);
+            -webkit-backdrop-filter: var(--blur-medium);
+            border: var(--border-solid-white);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-card), var(--inner-highlight);
+            transition: transform var(--transition-base), background var(--transition-base);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            background: var(--bg-overlay-hover);
+            box-shadow: 0 0 20px rgba(255,255,255), var(--shadow-card), var(--inner-highlight);
+        }
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .card p {
+            color: #ccc;
+        }
+        .more-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 24px;
+            background: var(--bg-overlay);
+            backdrop-filter: var(--blur-medium);
+            -webkit-backdrop-filter: var(--blur-medium);
+            border: var(--border-solid-white);
+            border-radius: 12px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition-base);
+            box-shadow: var(--inner-highlight);
+        }
+        .more-btn:hover {
+            background: var(--bg-overlay-hover);
+            box-shadow: 0 0 12px rgba(255,255,255), var(--inner-highlight);
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .social-icons img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            transition: var(--transition-base);
+            filter: drop-shadow(0 0 10px rgba(255,255,255));
+        }
+        .social-icons img:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 16px rgba(255,255,255));
+        }
+        /* 页脚 */
+        footer {
+            background: rgba(15,15,15,0.4);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-top: var(--border-solid-white);
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 80px;
+        }
+        footer p {
+            color: #999;
+            line-height: 1.8;
+        }
+
+        /* ========== 移动端侧边栏抽屉 ========== */
+        .mobile-drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 199;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .mobile-drawer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .mobile-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            max-width: 80vw;
+            height: 100%;
+            background: rgba(8, 9, 18, 0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: var(--border-light);
+            z-index: 200;
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5);
+        }
+        .mobile-drawer.active {
+            transform: translateX(0);
+        }
+        .mobile-drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: var(--border-light);
+        }
+        .mobile-drawer-logo {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+        .mobile-drawer-close {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: var(--transition-base);
+        }
+        .mobile-drawer-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+        .mobile-drawer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .mobile-drawer-links li a {
+            display: block;
+            padding: 14px 16px;
+            color: #eee;
+            text-decoration: none;
+            font-size: 1rem;
+            border: var(--border-light);
+            border-radius: 12px;
+            transition: var(--transition-base);
+        }
+        .mobile-drawer-links li a:hover {
+            background: var(--bg-overlay-hover);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        /* 响应式 */
+        @media (max-width: 992px) {
+            .nav-links { gap: 15px; }
+            .social-icons img { width: 60px; height: 60px; }
+            .explore-btn { padding: 12px 28px; font-size: 1rem; }
+            .carousel-title { font-size: 2.2rem; }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding-top: 58px;
+                padding-bottom: calc(64px + env(safe-area-inset-bottom));
+                background: #080912;
+            }
+            header { background: rgba(8, 9, 18, 0.88); }
+            .container { padding: 0 16px; }
+            .navbar { height: 58px; padding: 8px 0; flex-wrap: nowrap; gap: 12px; position: relative; }
+            /* 菜单按钮靠左 */
+            .mobile-menu-btn {
+                order: 1;
+                display: inline-flex;
+                width: 36px;
+                height: 36px;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                background: transparent;
+                border: 1px solid rgba(255,255,255,.35);
+                border-radius: 10px;
+                font-size: 1.25rem;
+                cursor: pointer;
+            }
+            /* logo 居中 */
+            .navbar > a:first-child {
+                order: 2;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .logo-img { height: 32px; max-width: 120px; }
+            .nav-container { display: none; }
+            /* 登录按钮靠右 */
+            .login-btn { order: 3; margin-left: auto; padding: 6px 13px; font-size: 0.8rem; }
+            .cards { grid-template-columns: 1fr; }
+            .hero-video-container {
+                height: calc(100svh - 58px);
+                min-height: 520px;
+                padding-top: 0;
+            }
+            .carousel-title {
+                width: 90%;
+                text-align: center;
+                font-size: clamp(1.5rem, 7vw, 2.2rem);
+                top: 53%;
+                white-space: normal;
+                line-height: 1.25;
+            }
+            .explore-btn {
+                padding: 10px 24px;
+                font-size: .9rem;
+                top: 72%;
+                border-radius: 999px;
+            }
+            .section { padding: 54px 0; }
+            .section-title { font-size: 1.45rem; margin-bottom: 24px; }
+            .card { padding: 22px; border-radius: 12px; }
+            .social-icons { gap: 25px; }
+            .social-icons img { width: 50px; height: 50px; }
+
+            .mobile-bottom-nav {
+                position: fixed;
+                z-index: 120;
+                display: flex;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: 64px;
+                padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
+                background: rgba(16,17,28,.94);
+                backdrop-filter: blur(18px);
+                border-top: 1px solid rgba(255,255,255,.14);
+                justify-content: space-around;
+            }
+            .mobile-bottom-nav a {
+                flex: 1;
+                color: #aeb2c2;
+                text-decoration: none;
+                font-size: .68rem;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                align-items: center;
+                justify-content: center;
+            }
+            .mobile-bottom-nav a span {
+                font-size: 1.15rem;
+                line-height: 1;
+            }
+            .mobile-bottom-nav a.active,
+            .mobile-bottom-nav a:hover {
+                color: #fff;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container navbar">
+            <a href="../page/minecraft.html">
+                <img src="../image/minecraft_logo.svg" alt="OUR MC Logo" class="logo-img">
+            </a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="打开菜单">&#9776;</button>
+            <div class="nav-container">
+                <ul class="nav-links">
+                    <li><a href="#home">首页</a></li>
+                    <li><a href="#how-develop">了解服务器</a></li>
+                    <li><a href="#play">加入方法</a></li>
+                    <li><a href="#public-resources">联系腐竹</a></li>
+                    <li><a href="../page/introduce_developer.html">了解此网站的开发者</a></li>
+                </ul>
+            </div>
+            <a href="../page/login.html" class="login-btn">登录</a>
+        </div>
+    </header>
+
+    <!-- 移动端侧边栏遮罩 -->
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay"></div>
+
+    <!-- 移动端侧边栏抽屉（从左向右滑出） -->
+    <nav class="mobile-drawer" id="mobileDrawer" aria-label="移动端导航菜单">
+        <div class="mobile-drawer-header">
+            <img src="../image/minecraft_logo.svg" alt="OUR MC Logo" class="mobile-drawer-logo">
+            <button class="mobile-drawer-close" id="mobileDrawerClose" aria-label="关闭菜单">&times;</button>
+        </div>
+        <ul class="mobile-drawer-links">
+            <li><a href="#home">首页</a></li>
+            <li><a href="#how-develop">了解服务器</a></li>
+            <li><a href="#play">加入方法</a></li>
+            <li><a href="#public-resources">联系腐竹</a></li>
+            <li><a href="../page/introduce_developer.html">了解此网站的开发者</a></li>
+        </ul>
+    </nav>
+
+    <section id="home" class="hero-video-container">
+        <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="../image/video-poster.jpg">
+            <source src="../image/vidio/minecraft-ad-vidio.mp4" type="video/mp4">
+            你的浏览器不支持HTML5视频
+        </video>
+        <div class="carousel-title">探索无边  方块筑梦</div>
+        <a href="#how-develop" class="explore-btn">开始探索</a>
+    </section>
+
+    <section id="how-develop" class="section">
+        <div class="container">
+            <h2 class="section-title">什么是Our Minecraft？</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto; color: #ccc; font-size: 1.1rem;">
+                OUR Minecraft是一个坚信探索无边，方块筑梦的公益服务器，是由服主“腐竹”带领OURMC Team开发的多玩法生存服务器，坚守
+                反矿透，反作弊原则，意在为Minecraft爱好者们搭建一个和谐，友爱的生存服务器环境，本网站为OURMC Team的公益广告网站
+                如想了解更多我们对OUR Minecraft的见解，请点击下方“了解更多”按钮。
+            </p>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://www.our-mc.cn/" target="_blank" rel="noopener noreferrer" class="more-btn">了解更多</a>
+            </div>
+        </div>
+
+    </section>
+        <section id="play" class="section">
+        <div class="container">
+            <h2 class="section-title">下载游玩此服务器所需要的资源</h2>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://pcl2.ijinshan.com/pages/versions/" target="_blank" rel="noopener noreferrer" class="more-btn">STEP1:PCL2（游戏启动器）</a>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://www.our-mc.cn/guide/new.html" target="_blank" rel="noopener noreferrer" class="more-btn">STEP2:注册our-mc skin账号</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="public-resources" class="section">
+        <div class="container">
+            <h2 class="section-title">骚扰腐竹</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>腐竹联系方式</h3>
+                    <p>QQ:3877364376</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>如果对此网站有任何问题，请在法定节假日期间向"Liusicheng20120802@outlook.com"发邮件，如对OURMC Team的有关产品有疑惑，请向“team@our-mc.cn”或“support@our-mc.cn”</p>
+        </div>
+    </footer>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (!targetElement) return;
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // 移动端侧边栏抽屉（从左向右滑出）
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDrawer = document.getElementById('mobileDrawer');
+        const mobileDrawerOverlay = document.getElementById('mobileDrawerOverlay');
+        const mobileDrawerClose = document.getElementById('mobileDrawerClose');
+
+        function openDrawer() {
+            mobileDrawer.classList.add('active');
+            mobileDrawerOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeDrawer() {
+            mobileDrawer.classList.remove('active');
+            mobileDrawerOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        mobileMenuBtn.addEventListener('click', openDrawer);
+        mobileDrawerClose.addEventListener('click', closeDrawer);
+        mobileDrawerOverlay.addEventListener('click', closeDrawer);
+
+        // 点击侧边栏链接后关闭抽屉
+        document.querySelectorAll('.mobile-drawer-links a').forEach(link => {
+            link.addEventListener('click', closeDrawer);
+        });
+
+        // 移动端底部导航点击激活
+        const mobileNavLinks = document.querySelectorAll('.mobile-bottom-nav a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNavLinks.forEach(item => item.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+
+        // 滚动监听：根据滚动位置自动高亮底部导航
+        const sections = document.querySelectorAll("section[id]");
+        window.addEventListener("scroll", () => {
+            let current = "";
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                if(window.scrollY >= sectionTop - 200){
+                    current = section.getAttribute("id");
+                }
+            });
+            mobileNavLinks.forEach((link) => {
+                link.classList.remove("active");
+                if(link.getAttribute("href") === `#${current}`){
+                    link.classList.add("active");
+                }
+            })
+        })
+    </script>
+</body>
+</html>
