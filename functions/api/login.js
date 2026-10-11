@@ -12,7 +12,7 @@ export async function onRequestPost(context) {
 
     if (!username || !password) return json({ error: '请输入用户名和密码' }, 400);
 
-    const user = await env.DB.prepare('SELECT id, username, password_hash FROM users WHERE username = ?')
+    const user = await env.DB.prepare('SELECT id, username, password_hash, email, email_verified FROM users WHERE username = ?')
       .bind(username)
       .first();
 
@@ -20,6 +20,11 @@ export async function onRequestPost(context) {
     if (!user) return json({ error: '用户名或密码错误' }, 401);
     const ok = await verifyPassword(password, user.password_hash);
     if (!ok) return json({ error: '用户名或密码错误' }, 401);
+
+    // 填了邮箱但未验证的账号禁止登录
+    if (user.email && !user.email_verified) {
+      return json({ error: '邮箱尚未验证，请先到注册邮箱点击激活链接后再登录' }, 403);
+    }
 
     const token = await createSession(env.DB, user.id);
     const res = json({ ok: true, username: user.username }, 200);
