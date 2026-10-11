@@ -155,6 +155,7 @@
             flex: 0 0 100%;
             width: 100%;
             height: 100%;
+            position: relative;
         }
         .carousel-item img {
             width: 100%;
@@ -244,6 +245,14 @@
             box-shadow: 0 0 20px rgba(255,255,255), 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255);
             transform: translate(-50%, -50%) scale(1.05);
         }
+
+        /* ========== 轮播区四个按钮单独调位置（桌面端） ==========
+           改 top = 按钮离图片顶部距离，left = 离图片左边距离（百分比）
+           想调哪张图就改哪一行的值，互不影响 */
+        .carousel-item:nth-child(1) .explore-btn { top: 65%; left: 50%; }
+        .carousel-item:nth-child(2) .explore-btn { top: 44%; left: 50%; }
+        .carousel-item:nth-child(3) .explore-btn { top: 25%; left: 50%; }
+        .carousel-item:nth-child(4) .explore-btn { top: 45%; left: 50%; }
 
         /* 内容区块 */
         .section {
@@ -469,6 +478,11 @@
             .social-icons { gap: 25px; }
             .social-icons img { width: 50px; height: 50px; }
             .explore-btn { padding: 10px 24px; font-size: .9rem; top: 72%; border-radius: 999px; }
+            /* 轮播区四个按钮单独调位置（手机端）：改 top/left 百分比 */
+            .carousel-item:nth-child(1) .explore-btn { top: 72%; left: 50%; }
+            .carousel-item:nth-child(2) .explore-btn { top: 72%; left: 50%; }
+            .carousel-item:nth-child(3) .explore-btn { top: 72%; left: 50%; }
+            .carousel-item:nth-child(4) .explore-btn { top: 72%; left: 50%; }
             .carousel-title { width: 90%; text-align: center; font-size: clamp(1.5rem, 7vw, 2.2rem); top: 53%; white-space: normal; line-height: 1.25; }
             .section { padding: 54px 0; }
             .section-title { font-size: 1.45rem; margin-bottom: 24px; }
@@ -520,15 +534,25 @@
 
     <section id="home" class="carousel-container">
         <div class="carousel-wrapper" id="carouselWrapper">
-            <div class="carousel-item"><img src="./image/main-preview-photo/photo1.jpg" alt="轮播图1"></div>
-            <div class="carousel-item"><img src="./image/main-preview-photo/photo2.jpg" alt="轮播图2"></div>
-            <div class="carousel-item"><img src="./image/main-preview-photo/photo3.jpg" alt="轮播图3"></div>
-            <div class="carousel-item"><img src="./image/main-preview-photo/photo4.jpg" alt="轮播图4"></div>
+            <div class="carousel-item">
+                <img src="./image/main-preview-photo/photo1.jpeg" alt="轮播图1">
+                <a href="page/ad_page/ad_1.html" class="explore-btn">了解更多</a>
+            </div>
+            <div class="carousel-item">
+                <img src="./image/main-preview-photo/photo2.jpg" alt="轮播图2">
+                <a href="https://www.apple.com.cn/iphone-18-pro/" class="explore-btn">开始探索</a>
+            </div>
+            <div class="carousel-item">
+                <img src="./image/main-preview-photo/photo3.jpg" alt="轮播图3">
+                <a href="https://www.mi.com/prod/xiaomi-18-fold?spmref=MiShop_PC.mihomepage.mtl_68d0931c799ab50001357c84.1" class="explore-btn">开始探索</a>
+            </div>
+            <div class="carousel-item">
+                <img src="./image/main-preview-photo/photo4.jpg" alt="轮播图4">
+                <a href="https://consumer.huawei.com/cn/phones/mate90-pro-max/?utm_medium=hwdc&utm_source=corp_banner2_mate90-pro-max=phones" class="explore-btn">开始探索</a>
+            </div>
         </div>
         <button class="carousel-btn prev-btn" id="prevBtn">←</button>
         <button class="carousel-btn next-btn" id="nextBtn">→</button>
-        <div class="carousel-title">欢迎来到我们的网站</div>
-        <a href="#how-develop" class="explore-btn">开始探索</a>
     </section>
 
     <section id="how-develop" class="section">

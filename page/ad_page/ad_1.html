@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="中华人民共和国成立77周年 国庆节介绍">
+    <title>欢度国庆 · 中华人民共和国成立77周年</title>
+    <style>
+        :root {
+            --bg-overlay: rgba(30, 30, 30, 0.2);
+            --bg-overlay-hover: rgba(40, 40, 40, 0.35);
+            --border-light: 1px solid rgba(255, 255, 255, 0.12);
+            --border-solid-white: 1px solid rgba(255, 255, 255);
+            --blur-strong: blur(24px) saturate(180%);
+            --blur-medium: blur(22px) saturate(170%);
+            --blur-light: blur(12px);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            --transition-base: all 0.3s ease;
+            /* 国庆主题强调色 */
+            --china-red: #e63946;
+            --china-red-deep: #c1121f;
+            --china-gold: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            color: #fff;
+            background-color: #000;
+            line-height: 1.6;
+            padding-top: 80px;
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+            font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("../../image/background.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(10px);
+            transform: scale(1.1);
+            z-index: -1;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ========== 顶部导航（与全站统一） ========== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(40, 40, 40, 0.25);
+            backdrop-filter: var(--blur-strong);
+            -webkit-backdrop-filter: var(--blur-strong);
+            border-bottom: var(--border-light);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), var(--inner-highlight);
+        }
+        .navbar {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            gap: 20px;
+        }
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+        .logo-img:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 12px rgba(255, 255, 255));
+        }
+        .nav-container {
+            display: flex;
+            flex: 1;
+            justify-content: center;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-links a {
+            color: #eee;
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 14px;
+            border: var(--border-solid-white);
+            border-radius: 99px;
+            transition: var(--transition-base);
+            white-space: nowrap;
+        }
+        .nav-links a:hover {
+            color: #fff;
+            box-shadow: 0 0 8px rgba(255, 255, 255), 0 0 18px rgba(255, 255, 255), inset 0 0 6px rgba(255, 255, 255);
+            text-shadow: 0 0 10px rgba(255, 255, 255);
+            transform: translateY(-2px);
+        }
+        .mobile-menu-btn, .mobile-bottom-nav { display: none; }
+
+        /* 登录按钮 */
+        .login-btn {
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            color: #fff;
+            border: var(--border-solid-white);
+            border-radius: 99px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition-base);
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.95rem;
+            box-shadow: var(--inner-highlight);
+        }
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.28);
+            box-shadow: 0 0 10px rgba(255, 255, 255), 0 0 24px rgba(255, 255, 255), inset 0 0 8px rgba(255, 255, 255);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        /* ========== 移动端侧边栏抽屉（与全站统一） ========== */
+        .mobile-drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 199;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .mobile-drawer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .mobile-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            max-width: 80vw;
+            height: 100%;
+            background: rgba(8, 9, 18, 0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: var(--border-light);
+            z-index: 200;
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5);
+        }
+        .mobile-drawer.active {
+            transform: translateX(0);
+        }
+        .mobile-drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: var(--border-light);
+        }
+        .mobile-drawer-logo {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+        .mobile-drawer-close {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: var(--transition-base);
+        }
+        .mobile-drawer-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+        .mobile-drawer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .mobile-drawer-links li a {
+            display: block;
+            padding: 14px 16px;
+            color: #eee;
+            text-decoration: none;
+            font-size: 1rem;
+            border: var(--border-light);
+            border-radius: 12px;
+            transition: var(--transition-base);
+        }
+        .mobile-drawer-links li a:hover {
+            background: var(--bg-overlay-hover);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        /* ========== Hero 区 ========== */
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px 80px;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            height: 900px;
+            background: radial-gradient(circle, rgba(230, 57, 70, 0.18) 0%, rgba(230, 57, 70, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .hero > * {
+            position: relative;
+            z-index: 1;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px;
+            border: 1px solid rgba(230, 57, 70, 0.6);
+            border-radius: 99px;
+            color: #ffb3b8;
+            font-size: 0.95rem;
+            letter-spacing: 0.2em;
+            background: rgba(230, 57, 70, 0.12);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            margin-bottom: 28px;
+        }
+        .hero-badge .star {
+            color: var(--china-gold);
+            letter-spacing: 0;
+        }
+        .hero-title {
+            font-size: clamp(2.6rem, 9vw, 7rem);
+            font-weight: 800;
+            line-height: 1.15;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 60px rgba(230, 57, 70, 0.35);
+            margin-bottom: 18px;
+        }
+        .hero-title .red {
+            color: #ff6b74;
+        }
+        .hero-sub {
+            font-size: clamp(1rem, 2.4vw, 1.5rem);
+            color: #f2f2f2;
+            letter-spacing: 0.35em;
+            margin-bottom: 12px;
+        }
+        .hero-years {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            font-size: clamp(1.2rem, 3vw, 1.9rem);
+            font-weight: 700;
+            color: var(--china-gold);
+            letter-spacing: 0.15em;
+            margin-bottom: 40px;
+        }
+        .hero-years::before,
+        .hero-years::after {
+            content: "";
+            width: 50px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(241, 196, 15, 0.7));
+        }
+        .hero-years::after {
+            background: linear-gradient(to left, transparent, rgba(241, 196, 15, 0.7));
+        }
+        .hero-btn {
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            color: #fff;
+            background: rgba(230, 57, 70, 0.25);
+            backdrop-filter: var(--blur-medium);
+            -webkit-backdrop-filter: var(--blur-medium);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-card), var(--inner-highlight);
+        }
+        .hero-btn:hover {
+            background: rgba(230, 57, 70, 0.45);
+            box-shadow: 0 0 20px rgba(230, 57, 70, 0.6), var(--shadow-card), var(--inner-highlight);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        /* ========== 内容区块 ========== */
+        .section {
+            padding: 80px 0;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .section-title .red {
+            color: #ff6b74;
+        }
+        .section-line {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, var(--china-red), var(--china-gold));
+            border-radius: 99px;
+            margin: 0 auto 40px;
+        }
+        .section-desc {
+            text-align: center;
+            max-width: 800px;
+            margin: -24px auto 40px;
+            color: #ccc;
+            font-size: 1.05rem;
+        }
+
+        /* 玻璃卡片 */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .card {
+            background: var(--bg-overlay);
+            backdrop-filter: var(--blur-medium);
+            -webkit-backdrop-filter: var(--blur-medium);
+            border: var(--border-solid-white);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-card), var(--inner-highlight);
+            transition: transform var(--transition-base), background var(--transition-base);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            background: var(--bg-overlay-hover);
+            box-shadow: 0 0 20px rgba(230, 57, 70, 0.35), var(--shadow-card), var(--inner-highlight);
+        }
+        .card-tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            color: #ffb3b8;
+            border: 1px solid rgba(230, 57, 70, 0.5);
+            border-radius: 99px;
+            padding: 3px 12px;
+            margin-bottom: 14px;
+            letter-spacing: 0.1em;
+        }
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .card p {
+            color: #ccc;
+            line-height: 1.8;
+        }
+        .card p + p {
+            margin-top: 10px;
+        }
+
+        /* 时间线（历史由来） */
+        .timeline {
+            max-width: 720px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            background: var(--bg-overlay);
+            backdrop-filter: var(--blur-medium);
+            -webkit-backdrop-filter: var(--blur-medium);
+            border: var(--border-light);
+            border-radius: 16px;
+            padding: 24px 28px;
+            box-shadow: var(--shadow-card), var(--inner-highlight);
+            transition: transform var(--transition-base), background var(--transition-base);
+        }
+        .timeline-item:hover {
+            transform: translateX(8px);
+            background: var(--bg-overlay-hover);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        .timeline-date {
+            flex: 0 0 130px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--china-gold);
+            letter-spacing: 0.05em;
+            padding-top: 2px;
+        }
+        .timeline-body h4 {
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .timeline-body p {
+            color: #ccc;
+            line-height: 1.8;
+        }
+
+        /* 国家象征卡片特殊配色 */
+        .symbol .card-tag { color: var(--china-gold); border-color: rgba(241, 196, 15, 0.5); }
+        .symbol .card:hover { box-shadow: 0 0 20px rgba(241, 196, 15, 0.3), var(--shadow-card), var(--inner-highlight); }
+
+        /* 页脚（与全站统一） */
+        footer {
+            background: rgba(15, 15, 15, 0.4);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-top: var(--border-solid-white);
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 40px;
+        }
+        footer p {
+            color: #999;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 992px) {
+            .nav-links { gap: 15px; }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding-top: 58px;
+                padding-bottom: 0;
+                background: #080912;
+            }
+            header { background: rgba(8, 9, 18, 0.88); }
+            .container { padding: 0 16px; }
+            .navbar { height: 58px; padding: 8px 0; flex-wrap: nowrap; gap: 12px; position: relative; }
+            .mobile-menu-btn {
+                order: 1;
+                display: inline-flex;
+                width: 36px;
+                height: 36px;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                background: transparent;
+                border: 1px solid rgba(255, 255, 255, 0.35);
+                border-radius: 10px;
+                font-size: 1.25rem;
+                cursor: pointer;
+            }
+            .navbar > a:first-child {
+                order: 2;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .logo-img { height: 32px; max-width: 120px; }
+            .nav-container { display: none; }
+            .login-btn { order: 3; margin-left: auto; padding: 6px 13px; font-size: 0.8rem; }
+
+            .hero { min-height: calc(100svh - 58px); padding: 40px 16px 60px; }
+            .hero-badge { font-size: 0.75rem; padding: 6px 14px; letter-spacing: 0.12em; }
+            .hero-sub { letter-spacing: 0.2em; }
+            .hero-btn { padding: 11px 26px; font-size: 0.95rem; border-radius: 999px; }
+
+            .section { padding: 54px 0; }
+            .section-title { font-size: 1.45rem; margin-bottom: 10px; }
+            .card { padding: 22px; border-radius: 12px; }
+            .timeline-item { flex-direction: column; gap: 8px; padding: 20px; }
+            .timeline-date { flex: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航（与全站统一） -->
+    <header>
+        <div class="container navbar">
+            <a href="../index.html">
+                <img src="../../logo.png" alt="OUR MC Logo" class="logo-img">
+            </a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="打开菜单">&#9776;</button>
+            <div class="nav-container">
+                <ul class="nav-links">
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="../index.html#how-develop">网站开发</a></li>
+                    <li><a href="../index.html#public-resources">公共资源</a></li>
+                    <li><a href="../introduce_developer.html">了解此网站的开发者</a></li>
+                    <li><a href="../index.html#minecraft">minecraft服务器</a></li>
+                    <li><a href="../index.html#video">我们的社交媒体</a></li>
+                </ul>
+            </div>
+            <a href="../login.html" class="login-btn">登录</a>
+        </div>
+    </header>
+
+    <!-- 移动端侧边栏遮罩 -->
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay"></div>
+
+    <!-- 移动端侧边栏抽屉（从左向右滑出） -->
+    <nav class="mobile-drawer" id="mobileDrawer" aria-label="移动端导航菜单">
+        <div class="mobile-drawer-header">
+            <img src="../../logo.png" alt="OUR MC Logo" class="mobile-drawer-logo">
+            <button class="mobile-drawer-close" id="mobileDrawerClose" aria-label="关闭菜单">&times;</button>
+        </div>
+        <ul class="mobile-drawer-links">
+            <li><a href="../index.html">首页</a></li>
+            <li><a href="../index.html#how-develop">网站开发</a></li>
+            <li><a href="../index.html#public-resources">公共资源</a></li>
+            <li><a href="../introduce_developer.html">了解此网站的开发者</a></li>
+            <li><a href="../index.html#minecraft">minecraft服务器</a></li>
+            <li><a href="../index.html#video">我们的社交媒体</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge"><span class="star">★</span> 中华人民共和国国庆日 <span class="star">★</span></div>
+        <h1 class="hero-title">欢度<span class="red">国庆</span></h1>
+        <div class="hero-sub">锦绣中华 · 盛世华诞</div>
+        <div class="hero-years">1949 — 2026</div>
+        <a href="#intro" class="hero-btn">了解国庆节</a>
+    </section>
+
+    <!-- 国庆节简介 -->
+    <section id="intro" class="section">
+        <div class="container">
+            <h2 class="section-title">什么是<span class="red">国庆节</span>？</h2>
+            <div class="section-line"></div>
+            <p class="section-desc">国庆节是中华人民共和国成立的纪念日，也是全国各族人民共同欢庆的节日。</p>
+            <div class="cards">
+                <div class="card">
+                    <span class="card-tag">开国大典</span>
+                    <h3>1949年10月1日</h3>
+                    <p>1949年10月1日，开国大典在北京天安门广场隆重举行。毛泽东主席在天安门城楼上庄严宣告：中华人民共和国中央人民政府今天成立了！</p>
+                    <p>这一历史时刻标志着中国人民从此站起来了，开启了中华民族历史的新纪元。</p>
+                </div>
+                <div class="card">
+                    <span class="card-tag">国庆日确立</span>
+                    <h3>1949年12月2日</h3>
+                    <p>1949年12月2日，中央人民政府委员会第四次会议通过《关于中华人民共和国国庆日的决议》，规定每年10月1日为国庆日。</p>
+                    <p>从此，10月1日成为中华人民共和国各族人民共同庆祝的伟大节日。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 历史由来 -->
+    <section id="history" class="section">
+        <div class="container">
+            <h2 class="section-title">国庆节的<span class="red">由来</span></h2>
+            <div class="section-line"></div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">1949.10.01</div>
+                    <div class="timeline-body">
+                        <h4>开国大典</h4>
+                        <p>中华人民共和国中央人民政府成立，定都北平，并改北平为北京。天安门广场举行盛大的开国大典。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">1949.12.02</div>
+                    <div class="timeline-body">
+                        <h4>确立国庆日</h4>
+                        <p>中央人民政府委员会第四次会议通过决议，以每年10月1日为中华人民共和国国庆日。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">1950年起</div>
+                    <div class="timeline-body">
+                        <h4>每年庆祝</h4>
+                        <p>自1950年起，每年的10月1日成为全国各族人民热烈庆祝的伟大节日，延续至今。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026.10.01</div>
+                    <div class="timeline-body">
+                        <h4>成立77周年</h4>
+                        <p>2026年10月1日，中华人民共和国迎来成立77周年。七十七载风雨兼程，山河锦绣，国泰民安。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 庆祝活动 -->
+    <section id="celebration" class="section">
+        <div class="container">
+            <h2 class="section-title">国庆<span class="red">庆祝活动</span></h2>
+            <div class="section-line"></div>
+            <div class="cards">
+                <div class="card">
+                    <span class="card-tag">升旗仪式</span>
+                    <h3>天安门升旗</h3>
+                    <p>国庆日清晨，天安门广场举行隆重的升旗仪式。五星红旗在国歌声中冉冉升起，万羽和平鸽展翅飞翔，场面庄重热烈。</p>
+                </div>
+                <div class="card">
+                    <span class="card-tag">盛大阅兵</span>
+                    <h3>阅兵与群众游行</h3>
+                    <p>每逢五、逢十周年等重大庆典年份，天安门广场会举行盛大阅兵式和群众游行，展示国防力量与建设成就。</p>
+                </div>
+                <div class="card">
+                    <span class="card-tag">国庆假期</span>
+                    <h3>七天长假</h3>
+                    <p>国庆节期间全国放假七天，人们返乡团圆、出游旅行、观景赏灯，大街小巷挂满国旗，处处洋溢着节日气氛。</p>
+                </div>
+                <div class="card">
+                    <span class="card-tag">万家灯火</span>
+                    <h3>烟花与夜景</h3>
+                    <p>许多城市在国庆之夜举办灯光秀与烟花晚会，长江两岸、城市地标点亮中国红，为祖国送上美好祝福。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 国家象征 -->
+    <section id="symbols" class="section symbol">
+        <div class="container">
+            <h2 class="section-title">我们的<span class="red">国家象征</span></h2>
+            <div class="section-line"></div>
+            <div class="cards">
+                <div class="card">
+                    <span class="card-tag">国旗</span>
+                    <h3>五星红旗</h3>
+                    <p>五星红旗的红色象征革命，旗面上的五颗五角星及其相互关系象征中国共产党领导下的革命人民大团结。星用黄色是为着在红地上显出光明。</p>
+                </div>
+                <div class="card">
+                    <span class="card-tag">国徽</span>
+                    <h3>中华人民共和国国徽</h3>
+                    <p>国徽中间是五星照耀下的天安门，周围是谷穗和齿轮。天安门象征民族精神，齿轮和谷穗象征工人阶级与农民阶级，五颗星象征中国共产党领导下的人民大团结。</p>
+                </div>
+                <div class="card">
+                    <span class="card-tag">国歌</span>
+                    <h3>《义勇军进行曲》</h3>
+                    <p>《义勇军进行曲》由田汉作词、聂耳作曲，1949年9月被确定为中华人民共和国代国歌，2004年写入宪法正式定为国歌，是中华民族精神的集中体现。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚（与全站统一） -->
+    <footer>
+        <div class="container">
+            <p>如果对此网站有任何问题，请在法定节假日期间的早7:00至晚8:00期间向"Liusicheng20120802@outlook.com"发邮件。</p>
+            <p style="margin-top: 8px; color: rgba(255, 255, 255, 0.5);">祝福祖国繁荣昌盛，国泰民安</p>
+        </div>
+    </footer>
+
+    <script>
+        // 平滑滚动（页内锚点）
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetElement = document.querySelector(this.getAttribute('href'));
+                if (!targetElement) return;
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // 移动端侧边栏抽屉（从左向右滑出）
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDrawer = document.getElementById('mobileDrawer');
+        const mobileDrawerOverlay = document.getElementById('mobileDrawerOverlay');
+        const mobileDrawerClose = document.getElementById('mobileDrawerClose');
+
+        function openDrawer() {
+            mobileDrawer.classList.add('active');
+            mobileDrawerOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeDrawer() {
+            mobileDrawer.classList.remove('active');
+            mobileDrawerOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        mobileMenuBtn.addEventListener('click', openDrawer);
+        mobileDrawerClose.addEventListener('click', closeDrawer);
+        mobileDrawerOverlay.addEventListener('click', closeDrawer);
+
+        // 点击侧边栏链接后关闭抽屉
+        document.querySelectorAll('.mobile-drawer-links a').forEach(link => {
+            link.addEventListener('click', closeDrawer);
+        });
+    </script>
+</body>
+</html>
