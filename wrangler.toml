@@ -1,0 +1,13 @@
+﻿# Cloudflare Pages 项目配置
+# 把 name 改成你在 Cloudflare 里的 Pages 项目名（后台能看到）
+name = "our-mc-site"
+compatibility_date = "2026-10-01"
+
+# 网站文件就在当前目录，functions/ 会被自动识别为后端函数
+pages_build_output_dir = "."
+
+# D1 数据库绑定：database_id 在第 5 步执行 wrangler d1 create 后填入
+[[d1_databases]]
+binding = "DB"
+database_name = "our-mc-db"
+database_id = "d08edfcf-9c54-4b4f-ac58-1b0029c27322"

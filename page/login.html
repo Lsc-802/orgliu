@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>敬请期待</title>
+    <title>登录 · OUR MC</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
         }
         body {
             background: #000;
@@ -40,13 +40,13 @@
             padding: 0 20px;
         }
 
-        /* 顶部导航 */
+        /* ========== 顶部导航（与全站统一） ========== */
         header {
             position: fixed;
             inset: 0 0 auto;
             background: rgba(40, 40, 40, 0.25);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
             border-bottom: 1px solid rgba(255, 255, 255, 0.12);
             z-index: 100;
         }
@@ -56,11 +56,18 @@
             align-items: center;
             justify-content: space-between;
             gap: 20px;
+            position: relative;
         }
         .logo-img {
             height: 40px;
             width: auto;
             object-fit: contain;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .logo-img:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 12px rgba(255, 255, 255));
         }
         .nav-container {
             flex: 1;
@@ -72,7 +79,7 @@
             gap: 25px;
             list-style: none;
         }
-        .nav-links a, .login-btn {
+        .nav-links a {
             color: #eee;
             text-decoration: none;
             border: 1px solid #fff;
@@ -80,27 +87,22 @@
             padding: 6px 14px;
             font-size: 0.95rem;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
-        .nav-links a:hover, .login-btn:hover {
+        .nav-links a:hover {
             color: #fff;
-            box-shadow: 0 0 8px rgba(255,255,255), 0 0 18px rgba(255,255,255);
+            box-shadow: 0 0 8px rgba(255, 255, 255), 0 0 18px rgba(255, 255, 255);
+            transform: translateY(-2px);
         }
         .login-btn {
             background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             white-space: nowrap;
         }
-        .mobile-menu-btn {
-            display: none;
-        }
+        .mobile-menu-btn { display: none; }
 
-        /* 主体 */
-        main {
-            text-align: center;
-            padding: 180px 0;
-            font-size: 1.4rem;
-        }
-
-        /* ========== 移动端侧边栏抽屉 ========== */
+        /* ========== 移动端侧边栏抽屉（与全站统一） ========== */
         .mobile-drawer-overlay {
             position: fixed;
             top: 0;
@@ -194,14 +196,201 @@
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
 
-        /* 响应式 */
+        /* ========== 登录卡片 ========== */
+        .auth-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 200px);
+            padding: 40px 16px 60px;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(30, 30, 30, 0.2);
+            backdrop-filter: blur(22px) saturate(170%);
+            -webkit-backdrop-filter: blur(22px) saturate(170%);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            padding: 40px 36px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: transform 0.3s ease;
+        }
+        .auth-card:hover {
+            transform: translateY(-4px);
+        }
+        .auth-title {
+            text-align: center;
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .auth-sub {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.92rem;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.88rem;
+            color: #ddd;
+            margin-bottom: 8px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            border-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.25), inset 0 0 6px rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .form-group input::placeholder {
+            color: #777;
+        }
+        .auth-error {
+            display: none;
+            margin-bottom: 16px;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            color: #ffb3b8;
+            background: rgba(230, 57, 70, 0.12);
+            border: 1px solid rgba(230, 57, 70, 0.45);
+            border-radius: 10px;
+        }
+        .auth-error.show {
+            display: block;
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 13px 20px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .auth-btn:hover {
+            background: rgba(255, 255, 255, 0.28);
+            box-shadow: 0 0 14px rgba(255, 255, 255, 0.35), inset 0 0 8px rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        .auth-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .auth-switch {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        .auth-switch button {
+            background: none;
+            border: none;
+            color: #fff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0 2px;
+        }
+        .auth-switch button:hover {
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+        }
+
+        /* 已登录状态卡片 */
+        .logged-card {
+            display: none;
+        }
+        .logged-avatar {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.25), inset 0 0 10px rgba(255, 255, 255, 0.15);
+        }
+        .logged-name {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+        .logged-tip {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 26px;
+        }
+        .logged-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .logout-btn {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background: rgba(230, 57, 70, 0.25);
+            border: 1px solid rgba(230, 57, 70, 0.6);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background: rgba(230, 57, 70, 0.45);
+            box-shadow: 0 0 14px rgba(230, 57, 70, 0.5);
+        }
+        .back-btn {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.28);
+            box-shadow: 0 0 14px rgba(255, 255, 255, 0.35);
+        }
+
+        /* ========== 响应式 ========== */
         @media (max-width: 768px) {
             body {
                 padding-top: 58px;
             }
             .navbar {
                 height: 58px;
-                position: relative;
             }
             .logo-img {
                 position: absolute;
@@ -232,16 +421,35 @@
                 padding: 6px 13px;
                 font-size: 0.8rem;
             }
+            .auth-wrap {
+                min-height: calc(100svh - 120px);
+                padding: 24px 16px 40px;
+            }
+            .auth-card {
+                padding: 30px 22px;
+                border-radius: 16px;
+            }
+            .auth-title {
+                font-size: 1.4rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 顶部导航（与全站统一） -->
     <header>
         <div class="container navbar">
-            <a href="../index.html"><img src="../logo.png" alt="Logo" class="logo-img"></a>
+            <a href="../index.html"><img src="../logo.png" alt="OUR MC Logo" class="logo-img"></a>
             <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="打开菜单">&#9776;</button>
             <div class="nav-container">
-                <ul class="nav-links" id="navLinks"></ul>
+                <ul class="nav-links">
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="../index.html#how-develop">网站开发</a></li>
+                    <li><a href="../index.html#public-resources">公共资源</a></li>
+                    <li><a href="introduce_developer.html">了解此网站的开发者</a></li>
+                    <li><a href="../index.html#minecraft">minecraft服务器</a></li>
+                    <li><a href="../index.html#video">我们的社交媒体</a></li>
+                </ul>
             </div>
             <a href="login.html" class="login-btn">登录</a>
         </div>
@@ -250,10 +458,10 @@
     <!-- 移动端侧边栏遮罩 -->
     <div class="mobile-drawer-overlay" id="mobileDrawerOverlay"></div>
 
-    <!-- 移动端侧边栏抽屉（从左向右滑出） -->
+    <!-- 移动端侧边栏抽屉 -->
     <nav class="mobile-drawer" id="mobileDrawer" aria-label="移动端导航菜单">
         <div class="mobile-drawer-header">
-            <img src="../logo.png" alt="Logo" class="mobile-drawer-logo">
+            <img src="../logo.png" alt="OUR MC Logo" class="mobile-drawer-logo">
             <button class="mobile-drawer-close" id="mobileDrawerClose" aria-label="关闭菜单">&times;</button>
         </div>
         <ul class="mobile-drawer-links">
@@ -266,24 +474,64 @@
         </ul>
     </nav>
 
-    <main>开发中，敬请期待，欢迎加入开发！</main>
+    <!-- 登录 / 注册 -->
+    <div class="auth-wrap">
+        <!-- 登录表单 -->
+        <div class="auth-card" id="loginCard">
+            <h1 class="auth-title">欢迎回来</h1>
+            <p class="auth-sub">登录你的 OUR MC 账号</p>
+            <div class="auth-error" id="loginError"></div>
+            <form id="loginForm" autocomplete="on">
+                <div class="form-group">
+                    <label for="loginUsername">用户名</label>
+                    <input type="text" id="loginUsername" placeholder="请输入用户名" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">密码</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="auth-btn" id="loginSubmitBtn">登 录</button>
+            </form>
+            <p class="auth-switch">还没有账号？<button type="button" id="toRegisterBtn">立即注册</button></p>
+        </div>
+
+        <!-- 注册表单 -->
+        <div class="auth-card" id="registerCard" style="display: none;">
+            <h1 class="auth-title">创建账号</h1>
+            <p class="auth-sub">加入 OUR MC 社区</p>
+            <div class="auth-error" id="registerError"></div>
+            <form id="registerForm" autocomplete="on">
+                <div class="form-group">
+                    <label for="regUsername">用户名</label>
+                    <input type="text" id="regUsername" placeholder="3-20个字符" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">密码</label>
+                    <input type="password" id="regPassword" placeholder="至少6位" required autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword2">确认密码</label>
+                    <input type="password" id="regPassword2" placeholder="再次输入密码" required autocomplete="new-password">
+                </div>
+                <button type="submit" class="auth-btn" id="registerSubmitBtn">注 册</button>
+            </form>
+            <p class="auth-switch">已有账号？<button type="button" id="toLoginBtn">返回登录</button></p>
+        </div>
+
+        <!-- 已登录状态 -->
+        <div class="auth-card logged-card" id="loggedCard">
+            <div class="logged-avatar" id="loggedAvatar"></div>
+            <div class="logged-name" id="loggedName"></div>
+            <p class="logged-tip">你已登录 OUR MC 账号</p>
+            <div class="logged-actions">
+                <button class="logout-btn" id="logoutBtn">退出登录</button>
+                <a href="../index.html" class="back-btn">返回首页</a>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // 桌面端导航链接
-        const navItems = [
-            ['../index.html', '首页'],
-            ['../index.html#how-develop', '网站开发'],
-            ['../index.html#public-resources', '公共资源'],
-            ['introduce_developer.html', '了解此网站的开发者'],
-            ['../index.html#minecraft', 'minecraft服务器'],
-            ['../index.html#video', '我们的社交媒体']
-        ];
-        const navList = document.getElementById('navLinks');
-        if (navList) {
-            navList.innerHTML = navItems.map(([h, t]) => `<li><a href="${h}">${t}</a></li>`).join('');
-        }
-
-        // 移动端侧边栏抽屉
+        // ===== 移动端侧边栏抽屉 =====
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileDrawer = document.getElementById('mobileDrawer');
         const mobileDrawerOverlay = document.getElementById('mobileDrawerOverlay');
@@ -302,9 +550,128 @@
         mobileMenuBtn.addEventListener('click', openDrawer);
         mobileDrawerClose.addEventListener('click', closeDrawer);
         mobileDrawerOverlay.addEventListener('click', closeDrawer);
-        document.querySelectorAll('.mobile-drawer-links a').forEach(link => {
+        document.querySelectorAll('.mobile-drawer-links a').forEach(function (link) {
             link.addEventListener('click', closeDrawer);
         });
+
+        // ===== 登录 / 注册 =====
+        const loginCard = document.getElementById('loginCard');
+        const registerCard = document.getElementById('registerCard');
+        const loggedCard = document.getElementById('loggedCard');
+        const loginError = document.getElementById('loginError');
+        const registerError = document.getElementById('registerError');
+
+        function showError(el, msg) {
+            el.textContent = msg;
+            el.classList.add('show');
+        }
+        function clearError(el) {
+            el.textContent = '';
+            el.classList.remove('show');
+        }
+
+        // 切换登录/注册
+        document.getElementById('toRegisterBtn').addEventListener('click', function () {
+            clearError(loginError);
+            loginCard.style.display = 'none';
+            registerCard.style.display = 'block';
+        });
+        document.getElementById('toLoginBtn').addEventListener('click', function () {
+            clearError(registerError);
+            registerCard.style.display = 'none';
+            loginCard.style.display = 'block';
+        });
+
+        // 登录提交
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            clearError(loginError);
+            const btn = document.getElementById('loginSubmitBtn');
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('loginUsername').value.trim(),
+                        password: document.getElementById('loginPassword').value
+                    })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    location.href = '../index.html';
+                } else {
+                    showError(loginError, data.error || '登录失败，请稍后再试');
+                }
+            } catch (err) {
+                showError(loginError, '网络错误，请检查网络后重试');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        // 注册提交
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            clearError(registerError);
+            const pwd1 = document.getElementById('regPassword').value;
+            const pwd2 = document.getElementById('regPassword2').value;
+            if (pwd1 !== pwd2) {
+                showError(registerError, '两次输入的密码不一致');
+                return;
+            }
+            const btn = document.getElementById('registerSubmitBtn');
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('regUsername').value.trim(),
+                        password: pwd1
+                    })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    location.href = '../index.html';
+                } else {
+                    showError(registerError, data.error || '注册失败，请稍后再试');
+                }
+            } catch (err) {
+                showError(registerError, '网络错误，请检查网络后重试');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        // 检查登录状态
+        async function checkLogin() {
+            try {
+                const res = await fetch('/api/me');
+                const data = await res.json();
+                if (data.loggedIn) {
+                    loginCard.style.display = 'none';
+                    registerCard.style.display = 'none';
+                    loggedCard.style.display = 'block';
+                    document.getElementById('loggedName').textContent = data.username;
+                    document.getElementById('loggedAvatar').textContent = data.username.charAt(0).toUpperCase();
+                }
+            } catch (err) {
+                // 接口暂不可用时保持登录表单，不打扰用户
+            }
+        }
+
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', async function () {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+            } catch (err) {
+                // 忽略，继续跳转
+            }
+            location.href = 'login.html';
+        });
+
+        checkLogin();
     </script>
 </body>
 </html>
