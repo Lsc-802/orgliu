@@ -78,15 +78,16 @@ export function json(data, status = 200) {
 
 // ========== 会话管理 ==========
 
-// 创建会话：createSession(数据库, 用户ID) → token
+// 创建会话：createSession(数据库, 用户ID, 设备ID) → token
 // 注册/登录成功后调用，往 sessions 表插一条记录（7 天后过期）
-export async function createSession(db, userId) {
+// deviceId 可选：记录本次登录来自哪个设备（新设备验证用）
+export async function createSession(db, userId, deviceId = null) {
   // 生成一个超长随机字符串当 token（两个 UUID 拼一起，几乎不可能被猜中）
   const token = crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, '');
   // 存进 sessions 表，过期时间由 SQL 计算：当前时间 +7 天
   await db
-    .prepare("INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, datetime('now', '+7 days'))")
-    .bind(token, userId)
+    .prepare("INSERT INTO sessions (token, user_id, device_id, expires_at) VALUES (?, ?, ?, datetime('now', '+7 days'))")
+    .bind(token, userId, deviceId)
     .run();
   return token;
 }

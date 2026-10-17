@@ -274,6 +274,55 @@
         .auth-error.show {
             display: block;
         }
+        .code-row {
+            display: flex;
+            gap: 10px;
+        }
+        .code-row input {
+            flex: 1;
+            min-width: 0;
+        }
+        .code-btn {
+            width: 128px;
+            flex-shrink: 0;
+            padding: 12px 10px;
+            font-size: 0.85rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .code-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .code-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .login-verify-tip {
+            display: none;
+            margin-bottom: 14px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #ffd9a0;
+            background: rgba(255, 170, 0, 0.1);
+            border: 1px solid rgba(255, 170, 0, 0.4);
+            border-radius: 10px;
+            word-break: break-all;
+        }
+        .login-verify-tip.show {
+            display: block;
+        }
+        .rule-tip {
+            font-size: 0.75rem;
+            color: #777;
+            margin-top: 5px;
+            line-height: 1.5;
+        }
         .auth-btn {
             width: 100%;
             padding: 13px 20px;
@@ -492,6 +541,15 @@
                     <label for="loginPassword">密码</label>
                     <input type="password" id="loginPassword" placeholder="请输入密码" required autocomplete="current-password">
                 </div>
+                <!-- 新设备登录验证码（默认隐藏，需要时自动出现） -->
+                <div class="login-verify-tip" id="loginVerifyTip"></div>
+                <div class="form-group" id="loginCodeGroup" style="display: none;">
+                    <label for="loginCode">邮箱验证码</label>
+                    <div class="code-row">
+                        <input type="text" id="loginCode" placeholder="6位数字验证码" maxlength="6" autocomplete="one-time-code">
+                        <button type="button" class="code-btn" id="loginResendBtn">重新发送</button>
+                    </div>
+                </div>
                 <button type="submit" class="auth-btn" id="loginSubmitBtn">登 录</button>
             </form>
             <p class="auth-switch">还没有账号？<button type="button" id="toRegisterBtn">立即注册</button></p>
@@ -506,10 +564,23 @@
                 <div class="form-group">
                     <label for="regUsername">用户名</label>
                     <input type="text" id="regUsername" placeholder="3-20个字符" required autocomplete="username">
+                    <p class="rule-tip">仅可包含中文、字母、数字及 。 . ， , & _ -</p>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">邮箱</label>
+                    <input type="email" id="regEmail" placeholder="用于接收验证码" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="regCode">邮箱验证码</label>
+                    <div class="code-row">
+                        <input type="text" id="regCode" placeholder="6位数字验证码" maxlength="6" autocomplete="one-time-code">
+                        <button type="button" class="code-btn" id="regSendCodeBtn">发送验证码</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="regPassword">密码</label>
-                    <input type="password" id="regPassword" placeholder="至少6位" required autocomplete="new-password">
+                    <input type="password" id="regPassword" placeholder="6-12位" required autocomplete="new-password">
+                    <p class="rule-tip">需包含大写字母、小写字母、数字和特殊符号</p>
                 </div>
                 <div class="form-group">
                     <label for="regPassword2">确认密码</label>
@@ -563,6 +634,13 @@
         const loginError = document.getElementById('loginError');
         const registerError = document.getElementById('registerError');
 
+        // ===== 设备标识：本地持久保存，用于"新设备登录需验证码"判断 =====
+        let deviceId = localStorage.getItem('device_id');
+        if (!deviceId) {
+            deviceId = 'dev-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+            localStorage.setItem('device_id', deviceId);
+        }
+
         function showError(el, msg) {
             el.textContent = msg;
             el.classList.add('show');
@@ -572,9 +650,69 @@
             el.classList.remove('show');
         }
 
+        // ===== 发送验证码（带 60 秒倒计时） =====
+        function startCountdown(btn) {
+            btn.disabled = true;
+            let sec = 60;
+            btn.textContent = sec + 's后重发';
+            const timer = setInterval(function () {
+                sec--;
+                btn.textContent = sec + 's后重发';
+                if (sec <= 0) {
+                    clearInterval(timer);
+                    btn.textContent = '发送验证码';
+                    btn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        async function sendCode(purpose, email, btn, errEl) {
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/send-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, purpose: purpose })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    showError(errEl, data.error || '发送失败，请稍后再试');
+                } else {
+                    clearError(errEl);
+                }
+            } catch (err) {
+                showError(errEl, '网络错误，请检查网络后重试');
+            }
+            startCountdown(btn);
+        }
+
+        // 注册页"发送验证码"按钮
+        document.getElementById('regSendCodeBtn').addEventListener('click', function () {
+            const email = document.getElementById('regEmail').value.trim();
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError(registerError, '请先输入正确的邮箱地址');
+                return;
+            }
+            clearError(registerError);
+            sendCode('register', email, document.getElementById('regSendCodeBtn'), registerError);
+        });
+
+        // 登录页"重新发送"按钮（新设备验证码过期/没收到时用）
+        let pendingLoginEmail = null;
+        document.getElementById('loginResendBtn').addEventListener('click', function () {
+            if (!pendingLoginEmail) return;
+            clearError(loginError);
+            sendCode('login', pendingLoginEmail, document.getElementById('loginResendBtn'), loginError);
+        });
+
         // 切换登录/注册
         document.getElementById('toRegisterBtn').addEventListener('click', function () {
             clearError(loginError);
+            // 重置登录页的验证码区域
+            document.getElementById('loginVerifyTip').classList.remove('show');
+            document.getElementById('loginCodeGroup').style.display = 'none';
+            document.getElementById('loginCode').value = '';
+            pendingLoginEmail = null;
             loginCard.style.display = 'none';
             registerCard.style.display = 'block';
         });
@@ -584,7 +722,7 @@
             loginCard.style.display = 'block';
         });
 
-        // 登录提交
+        // 登录提交（支持新设备验证码二次验证）
         document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             clearError(loginError);
@@ -596,12 +734,21 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         username: document.getElementById('loginUsername').value.trim(),
-                        password: document.getElementById('loginPassword').value
+                        password: document.getElementById('loginPassword').value,
+                        deviceId: deviceId,
+                        loginCode: document.getElementById('loginCode').value.trim()
                     })
                 });
                 const data = await res.json();
                 if (res.ok) {
                     location.href = '../index.html';
+                } else if (data.needVerify) {
+                    // 新设备：后端已自动发送验证码，这里显示验证码输入区
+                    pendingLoginEmail = data.email || null;
+                    document.getElementById('loginVerifyTip').textContent = data.error || '请输入邮箱验证码';
+                    document.getElementById('loginVerifyTip').classList.add('show');
+                    document.getElementById('loginCodeGroup').style.display = 'block';
+                    document.getElementById('loginCode').focus();
                 } else {
                     showError(loginError, data.error || '登录失败，请稍后再试');
                 }
@@ -612,16 +759,46 @@
             }
         });
 
-        // 注册提交
+        // 注册提交（带邮箱验证码）
         document.getElementById('registerForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             clearError(registerError);
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
             const pwd1 = document.getElementById('regPassword').value;
             const pwd2 = document.getElementById('regPassword2').value;
+            const code = document.getElementById('regCode').value.trim();
+
+            // 前端预检密码规则（和后端一致，减少无效请求）
+            if (pwd1.length < 6 || pwd1.length > 12) {
+                showError(registerError, '密码长度需为 6-12 位');
+                return;
+            }
+            if (!/[A-Z]/.test(pwd1)) {
+                showError(registerError, '密码必须包含至少一个大写字母');
+                return;
+            }
+            if (!/[a-z]/.test(pwd1)) {
+                showError(registerError, '密码必须包含至少一个小写字母');
+                return;
+            }
+            if (!/\d/.test(pwd1)) {
+                showError(registerError, '密码必须包含至少一个数字');
+                return;
+            }
+            if (!/[^A-Za-z0-9]/.test(pwd1)) {
+                showError(registerError, '密码必须包含至少一个特殊符号');
+                return;
+            }
             if (pwd1 !== pwd2) {
                 showError(registerError, '两次输入的密码不一致');
                 return;
             }
+            if (!code) {
+                showError(registerError, '请先获取并填写邮箱验证码');
+                return;
+            }
+
             const btn = document.getElementById('registerSubmitBtn');
             btn.disabled = true;
             try {
@@ -629,8 +806,11 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        username: document.getElementById('regUsername').value.trim(),
-                        password: pwd1
+                        username: username,
+                        email: email,
+                        password: pwd1,
+                        code: code,
+                        deviceId: deviceId
                     })
                 });
                 const data = await res.json();
