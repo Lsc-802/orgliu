@@ -12,11 +12,3 @@ pages_build_output_dir = "."
 binding = "DB"
 database_name = "our-mc-db"
 database_id = "d08edfcf-9c54-4b4f-ac58-1b0029c27322"
-
-# 邮件发送配置（QQ 邮箱 SMTP）—— 按最后给你的步骤操作 QQ 邮箱后，把授权码填进 SMTP_PASS
-[vars]
-SMTP_HOST = "smtp.qq.com"
-SMTP_PORT = "465"
-SMTP_USER = "3767878328@qq.com"
-SMTP_PASS = "wtdhubisrithceib"
-MAIL_FROM = "3767878328@qq.com"
