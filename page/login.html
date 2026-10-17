@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 · OUR MC</title>
+    <title>登录</title>
     <style>
         * {
             box-sizing: border-box;
@@ -272,52 +272,6 @@
         .auth-error.show {
             display: block;
         }
-        .auth-success {
-            display: none;
-            text-align: center;
-        }
-        .auth-success.show {
-            display: block;
-        }
-        .success-icon {
-            width: 72px;
-            height: 72px;
-            margin: 0 auto 18px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 34px;
-            color: #fff;
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
-        }
-        .success-title {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-        .success-text {
-            color: #aaa;
-            font-size: 0.92rem;
-            line-height: 1.8;
-            margin-bottom: 26px;
-        }
-        .success-btn {
-            width: 100%;
-            padding: 12px 20px;
-            font-size: 1rem;
-            color: #fff;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.85);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .success-btn:hover {
-            background: rgba(255, 255, 255, 0.28);
-            box-shadow: 0 0 14px rgba(255, 255, 255, 0.35);
-        }
         .auth-btn {
             width: 100%;
             padding: 13px 20px;
@@ -525,7 +479,7 @@
         <!-- 登录表单 -->
         <div class="auth-card" id="loginCard">
             <h1 class="auth-title">欢迎回来</h1>
-            <p class="auth-sub">登录你的 OUR MC 账号</p>
+            <p class="auth-sub">登录你的账号</p>
             <div class="auth-error" id="loginError"></div>
             <form id="loginForm" autocomplete="on">
                 <div class="form-group">
@@ -544,16 +498,12 @@
         <!-- 注册表单 -->
         <div class="auth-card" id="registerCard" style="display: none;">
             <h1 class="auth-title">创建账号</h1>
-            <p class="auth-sub">加入 OUR MC 社区</p>
+            <p class="auth-sub">加入社区</p>
             <div class="auth-error" id="registerError"></div>
             <form id="registerForm" autocomplete="on">
                 <div class="form-group">
                     <label for="regUsername">用户名</label>
                     <input type="text" id="regUsername" placeholder="3-20个字符" required autocomplete="username">
-                </div>
-                <div class="form-group">
-                    <label for="regEmail">邮箱</label>
-                    <input type="email" id="regEmail" placeholder="用于接收验证邮件" required autocomplete="email">
                 </div>
                 <div class="form-group">
                     <label for="regPassword">密码</label>
@@ -566,13 +516,6 @@
                 <button type="submit" class="auth-btn" id="registerSubmitBtn">注 册</button>
             </form>
             <p class="auth-switch">已有账号？<button type="button" id="toLoginBtn">返回登录</button></p>
-            <!-- 注册成功提示 -->
-            <div class="auth-success" id="registerSuccess">
-                <div class="success-icon">&#10003;</div>
-                <h2 class="success-title">注册成功</h2>
-                <p class="success-text" id="registerSuccessMsg"></p>
-                <button class="success-btn" id="backToLoginBtn">返回登录</button>
-            </div>
         </div>
 
         <!-- 已登录状态 -->
@@ -630,11 +573,6 @@
         // 切换登录/注册
         document.getElementById('toRegisterBtn').addEventListener('click', function () {
             clearError(loginError);
-            // 重置注册卡片（显示表单、隐藏成功提示）
-            document.getElementById('registerForm').style.display = 'block';
-            document.querySelector('#registerCard .auth-switch').style.display = 'block';
-            document.getElementById('registerSuccess').classList.remove('show');
-            document.getElementById('registerSuccessMsg').textContent = '';
             loginCard.style.display = 'none';
             registerCard.style.display = 'block';
         });
@@ -690,18 +628,12 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         username: document.getElementById('regUsername').value.trim(),
-                        email: document.getElementById('regEmail').value.trim(),
                         password: pwd1
                     })
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    // 注册成功：显示"去邮箱激活"提示，不自动登录
-                    document.getElementById('registerForm').style.display = 'none';
-                    document.querySelector('#registerCard .auth-switch').style.display = 'none';
-                    document.getElementById('registerSuccessMsg').textContent =
-                        data.message || '注册成功，验证邮件已发送，请查收邮箱激活账号。';
-                    document.getElementById('registerSuccess').classList.add('show');
+                    location.href = '../index.html';
                 } else {
                     showError(registerError, data.error || '注册失败，请稍后再试');
                 }
@@ -710,16 +642,6 @@
             } finally {
                 btn.disabled = false;
             }
-        });
-
-        // 注册成功后返回登录
-        document.getElementById('backToLoginBtn').addEventListener('click', function () {
-            document.getElementById('registerForm').style.display = 'block';
-            document.querySelector('#registerCard .auth-switch').style.display = 'block';
-            document.getElementById('registerSuccess').classList.remove('show');
-            document.getElementById('registerSuccessMsg').textContent = '';
-            registerCard.style.display = 'none';
-            loginCard.style.display = 'block';
         });
 
         // 检查登录状态

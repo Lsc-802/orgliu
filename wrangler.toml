@@ -2,7 +2,6 @@
 # 把 name 改成你在 Cloudflare 里的 Pages 项目名（后台能看到）
 name = "our-mc-site"
 compatibility_date = "2026-10-01"
-compatibility_flags = ["nodejs_compat"]
 
 # 网站文件就在当前目录，functions/ 会被自动识别为后端函数
 pages_build_output_dir = "."
@@ -12,11 +11,3 @@ pages_build_output_dir = "."
 binding = "DB"
 database_name = "our-mc-db"
 database_id = "d08edfcf-9c54-4b4f-ac58-1b0029c27322"
-
-# 邮件发送配置（QQ 邮箱 SMTP）
-[vars]
-SMTP_HOST = "smtp.qq.com"
-SMTP_PORT = "465"
-SMTP_USER = "3767878328@qq.com"
-SMTP_PASS = "gkhimpxytrlgcfei"
-MAIL_FROM = "3767878328@qq.com"
