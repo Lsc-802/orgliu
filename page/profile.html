@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人主页 · OUR MC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        body {
+            color: #fff;
+            background-color: #000;
+            line-height: 1.6;
+            padding-top: 80px;
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("../image/background.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(10px);
+            transform: scale(1.1);
+            z-index: -1;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(40, 40, 40, 0.25);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow:
+                0 4px 20px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .logo-img {
+            height: 40px;
+            width: auto;
+            display: block;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 28px;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover {
+            color: #fff;
+        }
+        .login-btn {
+            display: inline-block;
+            padding: 8px 22px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            color: #fff;
+            font-size: 0.88rem;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            transition: box-shadow 0.25s, border-color 0.25s, transform 0.15s;
+        }
+        .login-btn:hover {
+            box-shadow: 0 0 18px rgba(139, 200, 234, 0.45), inset 0 0 10px rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+        }
+        /* 个人主页占位卡片 */
+        .profile-wrap {
+            display: flex;
+            justify-content: center;
+            padding: 60px 20px 80px;
+        }
+        .profile-card {
+            width: 100%;
+            max-width: 560px;
+            padding: 40px 34px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.04));
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+        .profile-avatar {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #5B8DEF 0%, rgba(20, 22, 35, 0.9) 100%);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+        }
+        .profile-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .profile-card p {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.95rem;
+        }
+        .profile-badge {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            color: #cfe3ff;
+            background: rgba(91, 141, 239, 0.18);
+            border: 1px solid rgba(91, 141, 239, 0.4);
+        }
+        .profile-badge.offline {
+            color: #ffd9d9;
+            background: rgba(234, 102, 104, 0.15);
+            border-color: rgba(234, 102, 104, 0.4);
+        }
+        .profile-card a.more-btn {
+            display: inline-block;
+            margin-top: 26px;
+            padding: 10px 26px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff;
+            font-size: 0.88rem;
+            text-decoration: none;
+            transition: box-shadow 0.25s, border-color 0.25s;
+        }
+        .profile-card a.more-btn:hover {
+            box-shadow: 0 0 18px rgba(139, 200, 234, 0.45);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .profile-card { padding: 32px 22px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container navbar">
+            <a href="../index.html"><img src="../logo.png" alt="ISC Logo" class="logo-img"></a>
+            <div class="nav-container" style="display:flex;align-items:center;">
+                <ul class="nav-links" style="margin-right:24px;">
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="introduce_developer.html">了解此网站的开发者</a></li>
+                    <li><a href="minecraft.html">minecraft服务器</a></li>
+                </ul>
+            </div>
+            <a href="login.html" class="login-btn">登录</a>
+        </div>
+    </header>
+
+    <!-- 个人主页占位 -->
+    <section class="profile-wrap">
+        <div class="profile-card">
+            <div class="profile-avatar" id="profileAvatar">?</div>
+            <h2 id="profileName">个人主页</h2>
+            <p>这里是你的个人主页，更多功能（资料编辑、头像、成就等）正在建设中，敬请期待。</p>
+            <div class="profile-badge offline" id="profileState">请先登录</div>
+            <br>
+            <a href="../index.html" class="more-btn">返回首页</a>
+        </div>
+    </section>
+
+    <script>
+    /* ===== 个人主页：读取登录状态 ===== */
+    (function () {
+        fetch('/api/me', { credentials: 'same-origin' })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (d && d.loggedIn && d.username) {
+                    var name = d.username;
+                    document.getElementById('profileName').textContent = name + ' 的个人主页';
+                    document.getElementById('profileState').textContent = '已登录';
+                    document.getElementById('profileState').className = 'profile-badge';
+                    var av = document.getElementById('profileAvatar');
+                    av.textContent = name.charAt(0).toUpperCase();
+                    var palette = ['#5B8DEF', '#8E6EE8', '#E86E9A', '#E89B6E', '#6EBBA8', '#7BA3E8', '#D27FBF', '#6FB5E0'];
+                    var h = 0;
+                    for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+                    av.style.background = 'linear-gradient(135deg,' + palette[h % palette.length] + ' 0%,rgba(20,22,35,.9) 100%)';
+                }
+            })
+            .catch(function () {});
+    })();
+    </script>
+    <script>
+    /* ===== 登录头像替换（全站统一）===== */
+    (function () {
+      fetch('/api/me', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d || !d.loggedIn || !d.username) return;
+          var btn = document.querySelector('.login-btn');
+          if (!btn) return;
+          var name = d.username;
+          var palette = ['#5B8DEF', '#8E6EE8', '#E86E9A', '#E89B6E', '#6EBBA8', '#7BA3E8', '#D27FBF', '#6FB5E0'];
+          var h = 0;
+          for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+          var color = palette[h % palette.length];
+          var a = document.createElement('a');
+          a.href = '/page/profile.html';
+          a.className = 'login-btn';
+          a.title = name;
+          a.style.cssText = 'display:inline-flex;align-items:center;gap:7px;padding:3px 8px 3px 3px;text-decoration:none;';
+          var dot = document.createElement('span');
+          dot.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,' + color + ' 0%,rgba(20,22,35,.9) 100%);color:#fff;font-size:14px;font-weight:700;box-shadow:0 0 0 2px rgba(255,255,255,.22);';
+          dot.textContent = name.charAt(0).toUpperCase();
+          var nm = document.createElement('span');
+          nm.style.cssText = 'font-size:.78rem;color:#e8eaf2;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+          nm.textContent = name;
+          a.appendChild(dot);
+          a.appendChild(nm);
+          btn.replaceWith(a);
+        })
+        .catch(function () {});
+    })();
+    </script>
+</body>
+</html>

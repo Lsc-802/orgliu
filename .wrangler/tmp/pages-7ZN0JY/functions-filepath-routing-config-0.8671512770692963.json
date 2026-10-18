@@ -1,0 +1,45 @@
+{
+  "routes": [
+    {
+      "routePath": "/api/login",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/login.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/logout",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/logout.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/me",
+      "mountPath": "/api",
+      "method": "GET",
+      "module": [
+        "api/me.js:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/register",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/register.js:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/send-code",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/send-code.js:onRequestPost"
+      ]
+    }
+  ],
+  "baseURL": "/"
+}

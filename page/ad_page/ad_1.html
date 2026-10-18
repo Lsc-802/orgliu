@@ -741,5 +741,37 @@
             link.addEventListener('click', closeDrawer);
         });
     </script>
+<script>
+/* ===== 登录头像替换（全站统一）===== */
+(function () {
+  fetch('/api/me', { credentials: 'same-origin' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (!d || !d.loggedIn || !d.username) return;
+      var btn = document.querySelector('.login-btn');
+      if (!btn) return;
+      var name = d.username;
+      var palette = ['#5B8DEF', '#8E6EE8', '#E86E9A', '#E89B6E', '#6EBBA8', '#7BA3E8', '#D27FBF', '#6FB5E0'];
+      var h = 0;
+      for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+      var color = palette[h % palette.length];
+      var a = document.createElement('a');
+      a.href = '/page/profile.html';
+      a.className = 'login-btn';
+      a.title = name;
+      a.style.cssText = 'display:inline-flex;align-items:center;gap:7px;padding:3px 8px 3px 3px;text-decoration:none;';
+      var dot = document.createElement('span');
+      dot.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,' + color + ' 0%,rgba(20,22,35,.9) 100%);color:#fff;font-size:14px;font-weight:700;box-shadow:0 0 0 2px rgba(255,255,255,.22);';
+      dot.textContent = name.charAt(0).toUpperCase();
+      var nm = document.createElement('span');
+      nm.style.cssText = 'font-size:.78rem;color:#e8eaf2;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      nm.textContent = name;
+      a.appendChild(dot);
+      a.appendChild(nm);
+      btn.replaceWith(a);
+    })
+    .catch(function () {});
+})();
+</script>
 </body>
 </html>
