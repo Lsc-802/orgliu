@@ -678,6 +678,109 @@
             })
         })
     </script>
+
+    <!-- PCL 提示弹窗 -->
+    <style>
+        .pcl-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+        .pcl-modal {
+            width: 100%;
+            max-width: 420px;
+            padding: 30px 26px 24px;
+            border-radius: 18px;
+            text-align: center;
+            color: #fff;
+            background: linear-gradient(135deg, rgba(40, 44, 66, 0.92), rgba(20, 22, 35, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+            animation: pclFadeIn 0.3s ease;
+        }
+        @keyframes pclFadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .pcl-modal h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+        .pcl-modal p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.92rem;
+            line-height: 1.7;
+            margin-bottom: 22px;
+        }
+        .pcl-modal-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .pcl-modal-btns button,
+        .pcl-modal-btns a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            font-size: 0.88rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: box-shadow 0.25s, transform 0.15s;
+        }
+        .pcl-modal-btns button {
+            color: #fff;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+        }
+        .pcl-modal-btns button:hover {
+            box-shadow: 0 0 14px rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+        .pcl-modal-btns a {
+            color: #fff;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+        }
+        .pcl-modal-btns a:hover {
+            box-shadow: 0 8px 26px rgba(37, 99, 235, 0.55);
+            transform: translateY(-1px);
+        }
+    </style>
+    <div class="pcl-modal-overlay" id="pclModal">
+        <div class="pcl-modal">
+            <h3>！！！重要公告！！！</h3>
+            <p>由于PCL、HMCL等启动器因法律问题停止提供游戏服务，本服务器（OUR MC Team）的部分游戏体验将受到影响，详情与解决办法请了解OUR MC Team官方网站或PCL官方网站！
+            </p>
+            <div class="pcl-modal-btns">
+                <button type="button" id="pclKnowBtn">我知道了</button>
+                <a href="https://pcl2.ijinshan.com/pages/versions/" target="_blank" rel="noopener noreferrer">转到PCL官网了解更多</a>
+            </div>
+        </div>
+    </div>
+    <script>
+    /* ===== PCL 提示弹窗逻辑 ===== */
+    (function () {
+        var overlay = document.getElementById('pclModal');
+        if (!overlay) return;
+        var know = document.getElementById('pclKnowBtn');
+        function close() { overlay.style.display = 'none'; }
+        if (know) know.addEventListener('click', close);
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) close();
+        });
+    })();
+    </script>
 <script>
 /* ===== 登录头像替换（全站统一）===== */
 (function () {

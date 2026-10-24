@@ -1008,128 +1008,45 @@ function getSessionToken(request) {
 __name(getSessionToken, "getSessionToken");
 
 // lib/smtp.js
-import { connect as tlsConnect } from "node:tls";
-var CRLF = "\r\n";
-function b64(str) {
-  const bytes = new TextEncoder().encode(str);
-  let bin = "";
-  for (const b of bytes) bin += String.fromCharCode(b);
-  return btoa(bin);
-}
-__name(b64, "b64");
-function readLine(socket) {
-  return new Promise((resolve, reject) => {
-    let buf = "";
-    const onData = /* @__PURE__ */ __name((chunk) => {
-      buf += chunk.toString("utf8");
-      let idx;
-      while ((idx = buf.indexOf("\n")) !== -1) {
-        const line = buf.slice(0, idx).replace(/\r$/, "");
-        buf = buf.slice(idx + 1);
-        socket.removeListener("data", onData);
-        socket.removeListener("error", onErr);
-        resolve(line);
-        return;
-      }
-    }, "onData");
-    const onErr = /* @__PURE__ */ __name((err) => {
-      socket.removeListener("data", onData);
-      reject(err);
-    }, "onErr");
-    socket.on("data", onData);
-    socket.once("error", onErr);
+var EMAILJS_SERVICE_ID = "service_prlud94";
+var EMAILJS_TEMPLATE_ID = "template_ibzz8b4";
+var EMAILJS_PUBLIC_KEY = "gFINawxMYa5Q3sYqq";
+var EMAILJS_PRIVATE_KEY = "HBs19s6TQRESK64W4HeUX";
+async function sendMail(env2, { to, subject, html, code }) {
+  const match2 = String(html || "").match(/\d{6}/);
+  const codeValue = code || (match2 ? match2[0] : "");
+  const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      service_id: EMAILJS_SERVICE_ID,
+      template_id: EMAILJS_TEMPLATE_ID,
+      user_id: EMAILJS_PUBLIC_KEY,
+      accessToken: EMAILJS_PRIVATE_KEY,
+      template_params: { to_email: to, code: codeValue }
+    })
   });
-}
-__name(readLine, "readLine");
-async function expectCode(socket, code) {
-  let line = await readLine(socket);
-  while (line.length > 3 && line[3] === "-") line = await readLine(socket);
-  if (!line.startsWith(String(code))) {
-    throw new Error(`SMTP \u9519\u8BEF\uFF08\u671F\u671B ${code}\uFF0C\u6536\u5230 ${line}\uFF09`);
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`EmailJS \u53D1\u9001\u5931\u8D25(${res.status}): ${text.slice(0, 300)}`);
   }
-  return line;
-}
-__name(expectCode, "expectCode");
-function writeLine(socket, line) {
-  return new Promise((resolve, reject) => {
-    socket.write(line + CRLF, (err) => err ? reject(err) : resolve());
-  });
-}
-__name(writeLine, "writeLine");
-function buildMessage(from, to, subject, html) {
-  const date = (/* @__PURE__ */ new Date()).toUTCString();
-  const bodyB64 = b64(html).replace(/(.{76})/g, "$1\r\n");
-  return [
-    `From: OUR MC <${from}>`,
-    `To: <${to}>`,
-    `Subject: =?UTF-8?B?${b64(subject)}?=`,
-    "MIME-Version: 1.0",
-    "Content-Type: text/html; charset=UTF-8",
-    "Content-Transfer-Encoding: base64",
-    "Date: " + date,
-    "",
-    bodyB64
-  ].join(CRLF);
-}
-__name(buildMessage, "buildMessage");
-async function sendMail(env2, { to, subject, html }) {
-  const host = env2.SMTP_HOST || "smtp.qq.com";
-  const port = Number(env2.SMTP_PORT || 465);
-  const user = env2.SMTP_USER;
-  const pass = env2.SMTP_PASS;
-  const from = env2.MAIL_FROM || user;
-  if (!user || !pass || String(pass).includes("\u5728\u8FD9\u91CC\u586B\u5165")) {
-    throw new Error("SMTP \u672A\u914D\u7F6E\uFF1A\u8BF7\u5148\u5728 wrangler.toml \u7684 [vars] \u91CC\u586B SMTP_USER / SMTP_PASS");
-  }
-  return new Promise((resolve, reject) => {
-    let settled = false;
-    const socket = tlsConnect({ host, port, servername: host }, async () => {
-      try {
-        await expectCode(socket, 220);
-        await writeLine(socket, "EHLO our-mc-site");
-        await expectCode(socket, 250);
-        await writeLine(socket, "AUTH LOGIN");
-        await expectCode(socket, 334);
-        await writeLine(socket, b64(user));
-        await expectCode(socket, 334);
-        await writeLine(socket, b64(pass));
-        await expectCode(socket, 235);
-        await writeLine(socket, `MAIL FROM:<${from}>`);
-        await expectCode(socket, 250);
-        await writeLine(socket, `RCPT TO:<${to}>`);
-        await expectCode(socket, 250);
-        await writeLine(socket, "DATA");
-        await expectCode(socket, 354);
-        await writeLine(socket, buildMessage(from, to, subject, html) + CRLF + ".");
-        await expectCode(socket, 250);
-        await writeLine(socket, "QUIT");
-        socket.end();
-        settled = true;
-        resolve({ ok: true });
-      } catch (err) {
-        if (!settled) {
-          settled = true;
-          socket.destroy();
-          reject(err);
-        }
-      }
-    });
-    socket.setTimeout(2e4, () => {
-      if (!settled) {
-        settled = true;
-        socket.destroy();
-        reject(new Error("SMTP \u8FDE\u63A5\u8D85\u65F6"));
-      }
-    });
-    socket.on("error", (err) => {
-      if (!settled) {
-        settled = true;
-        reject(err);
-      }
-    });
-  });
+  return { ok: true };
 }
 __name(sendMail, "sendMail");
+
+// api/debug-mail.js
+async function onRequestGet(context2) {
+  const { env: env2 } = context2;
+  const info3 = { mode: "EmailJS" };
+  try {
+    await sendMail(env2, { to: "3767878328@qq.com", subject: "\u8C03\u8BD5", html: "<p>\u8C03\u8BD5</p>", code: "123456" });
+    info3.send = "\u6210\u529F\uFF08\u6D4B\u8BD5\u90AE\u4EF6\u5DF2\u53D1\u5230 3767878328@qq.com\uFF0C\u9A8C\u8BC1\u7801 123456\uFF09";
+  } catch (e) {
+    info3.send = "\u5931\u8D25: " + e.message;
+  }
+  return json(info3);
+}
+__name(onRequestGet, "onRequestGet");
 
 // api/login.js
 function genCode() {
@@ -1218,14 +1135,14 @@ async function onRequestPost2(context2) {
 __name(onRequestPost2, "onRequestPost");
 
 // api/me.js
-async function onRequestGet(context2) {
+async function onRequestGet2(context2) {
   const { env: env2, request } = context2;
   const token = getSessionToken(request);
   const user = await getUserBySession(env2.DB, token);
   if (!user) return json({ loggedIn: false }, 200);
   return json({ loggedIn: true, username: user.username }, 200);
 }
-__name(onRequestGet, "onRequestGet");
+__name(onRequestGet2, "onRequestGet");
 
 // api/register.js
 async function onRequestPost3(context2) {
@@ -1335,8 +1252,15 @@ async function onRequestPost4(context2) {
 }
 __name(onRequestPost4, "onRequestPost");
 
-// ../.wrangler/tmp/pages-7ZN0JY/functionsRoutes-0.22603880876294302.mjs
+// ../.wrangler/tmp/pages-4lPF6v/functionsRoutes-0.8551973006765691.mjs
 var routes = [
+  {
+    routePath: "/api/debug-mail",
+    mountPath: "/api",
+    method: "GET",
+    middlewares: [],
+    modules: [onRequestGet]
+  },
   {
     routePath: "/api/login",
     mountPath: "/api",
@@ -1356,7 +1280,7 @@ var routes = [
     mountPath: "/api",
     method: "GET",
     middlewares: [],
-    modules: [onRequestGet]
+    modules: [onRequestGet2]
   },
   {
     routePath: "/api/register",
