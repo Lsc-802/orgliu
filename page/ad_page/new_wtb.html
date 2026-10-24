@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Windows Tool Box —— 一站式 Windows 系统工具箱，预告页">
+    <title>Windows Tool Box · 预告</title>
+    <style>
+        :root {
+            --bg-overlay: rgba(30, 30, 30, 0.2);
+            --border-light: 1px solid rgba(255, 255, 255, 0.12);
+            --border-solid-white: 1px solid rgba(255, 255, 255, 0.25);
+            --blur-strong: blur(24px) saturate(180%);
+            --blur-light: blur(12px);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            --transition-base: all 0.3s ease;
+            --accent: #38bdf8;
+            --accent-deep: #2563eb;
+            --accent-soft: rgba(56, 189, 248, 0.16);
+            --ok: #34d399;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            color: #fff;
+            background-color: #000;
+            line-height: 1.6;
+            padding-top: 80px;
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+            font-family: "Segoe UI", "Microsoft YaHei", Roboto, Arial, sans-serif;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("../../image/background.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(10px);
+            transform: scale(1.1);
+            z-index: -1;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ========== 顶部导航（与全站统一） ========== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(40, 40, 40, 0.25);
+            backdrop-filter: var(--blur-strong);
+            -webkit-backdrop-filter: var(--blur-strong);
+            border-bottom: var(--border-light);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), var(--inner-highlight);
+        }
+        .navbar {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            gap: 20px;
+        }
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+        .logo-img:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 12px rgba(255, 255, 255));
+        }
+        .nav-container {
+            display: flex;
+            flex: 1;
+            justify-content: center;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-links a {
+            color: #eee;
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 14px;
+            border: var(--border-solid-white);
+            border-radius: 99px;
+            transition: var(--transition-base);
+            white-space: nowrap;
+        }
+        .nav-links a:hover {
+            color: #fff;
+            border-color: rgba(56, 189, 248, 0.8);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+            transform: translateY(-2px);
+        }
+        .login-btn {
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: var(--blur-light);
+            -webkit-backdrop-filter: var(--blur-light);
+            color: #fff;
+            border: var(--border-solid-white);
+            border-radius: 99px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition-base);
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.95rem;
+        }
+        .login-btn:hover {
+            border-color: rgba(56, 189, 248, 0.8);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.35), inset 0 0 8px rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+        .mobile-menu-btn, .mobile-bottom-nav {
+            display: none;
+        }
+
+        /* ========== Hero：大标题 + 实时检测预览 ========== */
+        .hero {
+            padding: 56px 0 70px;
+            position: relative;
+        }
+        .hero-grid {
+            display: flex;
+            gap: 48px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .hero-text {
+            flex: 1 1 460px;
+            min-width: 0;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            color: #b9f7dc;
+            background: rgba(52, 211, 153, 0.12);
+            border: 1px solid rgba(52, 211, 153, 0.4);
+            margin-bottom: 20px;
+        }
+        .hero-badge .pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--ok);
+            box-shadow: 0 0 8px var(--ok);
+            animation: pulse 1.8s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+        .hero h1 {
+            font-size: clamp(2.6rem, 6vw, 4.2rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            background: linear-gradient(120deg, #fff 30%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #fff;
+        }
+        .hero-sub {
+            margin-top: 14px;
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.92);
+            font-weight: 500;
+        }
+        .hero-desc {
+            margin-top: 14px;
+            max-width: 560px;
+            font-size: 0.98rem;
+            color: rgba(255, 255, 255, 0.68);
+        }
+        .hero-cta {
+            margin-top: 26px;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #38bdf8, #2563eb);
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+            transition: var(--transition-base);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 10px 32px rgba(37, 99, 235, 0.55);
+            transform: translateY(-2px);
+        }
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 26px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            color: #fff;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: var(--transition-base);
+        }
+        .btn-ghost:hover {
+            border-color: rgba(56, 189, 248, 0.7);
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.3);
+        }
+
+        /* 签名元素：实时检测预览卡片 */
+        .hero-preview {
+            flex: 1 1 360px;
+            min-width: 280px;
+            max-width: 460px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+            border: var(--border-light);
+            backdrop-filter: blur(22px) saturate(160%);
+            -webkit-backdrop-filter: blur(22px) saturate(160%);
+            box-shadow: var(--shadow-card), var(--inner-highlight);
+            padding: 24px;
+        }
+        .preview-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .preview-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .preview-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            color: var(--ok);
+        }
+        .preview-live::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--ok);
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+        .hw-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 16px;
+        }
+        .hw-icon {
+            flex: 0 0 auto;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+        .hw-label {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.55);
+        }
+        .hw-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .gauges {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .gauge {
+            flex: 1 1 84px;
+            min-width: 76px;
+            text-align: center;
+        }
+        .gauge svg {
+            width: 72px;
+            height: 72px;
+        }
+        .gauge-track {
+            stroke: rgba(255, 255, 255, 0.12);
+        }
+        .gauge-bar {
+            stroke: var(--accent);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.6s ease;
+        }
+        .gauge-name {
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .gauge-num {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* ========== 功能矩阵 ========== */
+        .section {
+            padding: 40px 0 26px;
+        }
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.6rem, 3.6vw, 2.2rem);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .section-sub {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+            margin-bottom: 34px;
+        }
+        .group-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 26px 0 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .group-label::before {
+            content: "";
+            width: 6px;
+            height: 16px;
+            border-radius: 3px;
+            background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+        }
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .feature-card {
+            flex: 1 1 250px;
+            min-width: 0;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.035));
+            border: var(--border-light);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 20px 18px;
+            transition: var(--transition-base);
+        }
+        .feature-card:hover {
+            border-color: rgba(56, 189, 248, 0.55);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 16px rgba(56, 189, 248, 0.18);
+            transform: translateY(-3px);
+        }
+        .feature-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-soft);
+            color: var(--accent);
+            margin-bottom: 14px;
+        }
+        .feature-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+        .feature-name {
+            font-size: 1.02rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .feature-desc {
+            font-size: 0.86rem;
+            color: rgba(255, 255, 255, 0.62);
+            line-height: 1.7;
+        }
+        .feature-card.stage {
+            border-color: rgba(52, 211, 153, 0.5);
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.12), rgba(255, 255, 255, 0.04));
+        }
+        .stage-tag {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            color: #b9f7dc;
+            background: rgba(52, 211, 153, 0.14);
+            border: 1px solid rgba(52, 211, 153, 0.4);
+        }
+
+        /* ========== 路线图 ========== */
+        .roadmap {
+            padding: 30px 0 20px;
+        }
+        .roadmap-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 6px;
+        }
+        .roadmap-step {
+            flex: 1 1 280px;
+            min-width: 0;
+            border-radius: 16px;
+            padding: 20px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: var(--border-light);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        .roadmap-step.current {
+            border-color: rgba(56, 189, 248, 0.55);
+        }
+        .roadmap-num {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .roadmap-step h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .roadmap-step p {
+            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.62);
+        }
+        .roadmap-status {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 0.78rem;
+            padding: 4px 12px;
+            border-radius: 999px;
+        }
+        .roadmap-status.now {
+            color: #cff3e3;
+            background: rgba(52, 211, 153, 0.14);
+            border: 1px solid rgba(52, 211, 153, 0.4);
+        }
+        .roadmap-status.wait {
+            color: rgba(255, 255, 255, 0.65);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* ========== CTA / Footer ========== */
+        .cta {
+            text-align: center;
+            padding: 46px 0 40px;
+        }
+        .cta-title {
+            font-size: clamp(1.5rem, 3.4vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .cta-desc {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 0.96rem;
+            margin-bottom: 26px;
+        }
+        footer {
+            border-top: var(--border-light);
+            padding: 22px 0;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.82rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .hero {
+                padding-top: 40px;
+            }
+            .hero-grid {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .hero-preview {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container navbar">
+            <a href="../../index.html"><img src="../../logo.png" alt="ISC Logo" class="logo-img"></a>
+            <div class="nav-container">
+                <ul class="nav-links">
+                    <li><a href="../../index.html">首页</a></li>
+                    <li><a href="../introduce_developer.html">了解此网站的开发者</a></li>
+                </ul>
+            </div>
+            <a href="../../login.html" class="login-btn">登录</a>
+        </div>
+    </header>
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-text">
+                    <div class="hero-badge"><span class="pulse-dot"></span>预告中 · 第一阶段开发中</div>
+                    <h1>Windows Tool Box</h1>
+                    <div class="hero-sub">从硬件到系统，一眼掌握你的 Windows</div>
+                    <p class="hero-desc">
+                        一款面向 Windows 的一站式系统工具箱：硬件型号识别、系统资源实时监控、
+                        启动项与服务项管理、HOST 文件与右键菜单维护，以及弹窗拦截、垃圾清理、
+                        流量监控、DHCP 检测等实用工具，全部收纳在一个轻量的原生窗口里。
+                    </p>
+                    <div class="hero-cta">
+                        <a href="#roadmap" class="btn-primary">查看开发进度</a>
+                        <a href="#features" class="btn-ghost">探索全部功能</a>
+                    </div>
+                </div>
+                <div class="hero-preview">
+                    <div class="preview-head">
+                        <span class="preview-title">第一阶段 · 硬件与资源检测</span>
+                        <span class="preview-live">实时</span>
+                    </div>
+                    <div class="hw-row">
+                        <div class="hw-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1.5"></rect><path d="M9 9h6v6H9z"></path><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"></path></svg>
+                        </div>
+                        <div style="min-width:0;">
+                            <div class="hw-label">处理器型号</div>
+                            <div class="hw-value" id="hwCpu">检测中…</div>
+                        </div>
+                    </div>
+                    <div class="gauges">
+                        <div class="gauge">
+                            <svg viewBox="0 0 72 72">
+                                <circle class="gauge-track" cx="36" cy="36" r="30" fill="none" stroke-width="6"></circle>
+                                <circle class="gauge-bar" id="gaugeCpu" cx="36" cy="36" r="30" fill="none" stroke-width="6" stroke-dasharray="188.5" stroke-dashoffset="188.5"></circle>
+                            </svg>
+                            <div class="gauge-num" id="numCpu">0%</div>
+                            <div class="gauge-name">CPU</div>
+                        </div>
+                        <div class="gauge">
+                            <svg viewBox="0 0 72 72">
+                                <circle class="gauge-track" cx="36" cy="36" r="30" fill="none" stroke-width="6"></circle>
+                                <circle class="gauge-bar" id="gaugeMem" cx="36" cy="36" r="30" fill="none" stroke-width="6" stroke-dasharray="188.5" stroke-dashoffset="188.5"></circle>
+                            </svg>
+                            <div class="gauge-num" id="numMem">0%</div>
+                            <div class="gauge-name">内存</div>
+                        </div>
+                        <div class="gauge">
+                            <svg viewBox="0 0 72 72">
+                                <circle class="gauge-track" cx="36" cy="36" r="30" fill="none" stroke-width="6"></circle>
+                                <circle class="gauge-bar" id="gaugeDisk" cx="36" cy="36" r="30" fill="none" stroke-width="6" stroke-dasharray="188.5" stroke-dashoffset="188.5"></circle>
+                            </svg>
+                            <div class="gauge-num" id="numDisk">0%</div>
+                            <div class="gauge-name">磁盘</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 功能矩阵 ===== -->
+    <section class="section" id="features">
+        <div class="container">
+            <h2 class="section-title">它将拥有这些能力</h2>
+            <div class="section-sub">系统检测与工具集，一站式收纳</div>
+
+            <div class="group-label">系统检测</div>
+            <div class="card-grid">
+                <div class="feature-card stage">
+                    <div class="stage-tag">第一阶段 · 开发中</div>
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1.5"></rect><path d="M9 9h6v6H9z"></path><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"></path></svg>
+                    </div>
+                    <div class="feature-name">硬件型号检测</div>
+                    <div class="feature-desc">识别 CPU、主板、显卡、内存条等硬件型号与规格，一眼看清你的机器配置。</div>
+                </div>
+                <div class="feature-card stage">
+                    <div class="stage-tag">第一阶段 · 开发中</div>
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"></path><path d="M12 3a9 9 0 0 1 9 9h-9z"></path><path d="M12 12l3.5-2"></path></svg>
+                    </div>
+                    <div class="feature-name">系统资源实时监控</div>
+                    <div class="feature-desc">CPU、内存、磁盘、网络使用率实时曲线，异常占用一眼定位。</div>
+                </div>
+            </div>
+
+            <div class="group-label">系统管理</div>
+            <div class="card-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h10"></path><circle cx="18" cy="17" r="2.5"></circle></svg>
+                    </div>
+                    <div class="feature-name">启动项管理</div>
+                    <div class="feature-desc">查看并启停开机自启程序，告别开机慢与后台乱象。</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </div>
+                    <div class="feature-name">服务项管理</div>
+                    <div class="feature-desc">查看系统服务状态，手动启动或停止，精细控制系统行为。</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"></path><path d="M14 2v4h4"></path><path d="M9 14l3 3 3-3M12 11v6"></path></svg>
+                    </div>
+                    <div class="feature-name">HOST 文件管理</div>
+                    <div class="feature-desc">可视化编辑 hosts 映射，域名指向随心切换，配备份与还原。</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"></path><path d="M7 6v10a2 2 0 0 0 2 2h4"></path><path d="M14 12h6"></path><path d="M14 16h6"></path><path d="M14 20h6"></path><path d="M4 12h3"></path></svg>
+                    </div>
+                    <div class="feature-name">右键菜单管理</div>
+                    <div class="feature-desc">增删右键菜单项，清理残留，恢复被精简掉的常用入口。</div>
+                </div>
+            </div>
+
+            <div class="group-label">安全与网络</div>
+            <div class="card-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path><path d="M8 15h4"></path></svg>
+                    </div>
+                    <div class="feature-name">弹窗拦截</div>
+                    <div class="feature-desc">自动识别并拦截流氓弹窗、广告窗，一键锁定干净桌面。</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h10l2 2h6v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><path d="M3 6V4h10"></path></svg>
+                    </div>
+                    <div class="feature-name">垃圾清理</div>
+                    <div class="feature-desc">清理系统缓存、临时文件与残留，释放磁盘空间。</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="M8 8l4 4 4-4"></path><path d="M4 21h16"></path></svg>
+                    </div>
+                    <div class="feature-name">流量监控</div>
+                    <div class="feature-desc">统计各应用实时上下行流量，揪出偷偷上传的进程。</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"></path><path d="M4 20v-8"></path><path d="M9 20v-6"></path><path d="M14 20v-4"></path><path d="M19 20v-10"></path><path d="M2 10l2-2 3 2 3-3 2 2"></path></svg>
+                    </div>
+                    <div class="feature-name">DHCP 检测</div>
+                    <div class="feature-desc">检测网络 DHCP 状态与异常，排查 IP 冲突与掉线问题。</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 路线图 ===== -->
+    <section class="roadmap" id="roadmap">
+        <div class="container">
+            <h2 class="section-title">开发路线</h2>
+            <div class="section-sub">循序渐进，一步步补齐全部能力</div>
+            <div class="roadmap-grid">
+                <div class="roadmap-step current">
+                    <div class="roadmap-num">STEP 01</div>
+                    <h3>硬件检测 + 资源监控</h3>
+                    <p>识别硬件型号与规格，实时监测 CPU / 内存 / 磁盘 / 网络状态，打好系统检测的底层能力。</p>
+                    <span class="roadmap-status now">开发中 · 第一阶段</span>
+                </div>
+                <div class="roadmap-step">
+                    <div class="roadmap-num">STEP 02</div>
+                    <h3>系统管理工具集</h3>
+                    <p>启动项、服务项、HOST 文件与右键菜单管理，让系统行为完全可控。</p>
+                    <span class="roadmap-status wait">规划中</span>
+                </div>
+                <div class="roadmap-step">
+                    <div class="roadmap-num">STEP 03</div>
+                    <h3>安全与网络工具</h3>
+                    <p>弹窗拦截、垃圾清理、流量监控与 DHCP 检测，守护干净、稳定、安全的系统环境。</p>
+                    <span class="roadmap-status wait">规划中</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="cta">
+        <div class="container">
+            <h2 class="cta-title">敬请期待</h2>
+            <p class="cta-desc">第一阶段正在开发中，更多能力将陆续亮相。</p>
+            <a href="../../index.html" class="btn-primary">返回 OurWeb 首页</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">Windows Tool Box · 预告页 · 与 OurWeb 同属于该站开发者</div>
+    </footer>
+
+    <script>
+    /* ===== 实时检测预览（模拟数据，示意第一阶段效果） ===== */
+    (function () {
+        var cpus = ['Intel Core i7-13700K', 'AMD Ryzen 7 7800X3D', 'Intel Core Ultra 9 285K', 'AMD Ryzen 5 7500F'];
+        var cpuEl = document.getElementById('hwCpu');
+        var gCpu = document.getElementById('gaugeCpu');
+        var gMem = document.getElementById('gaugeMem');
+        var gDisk = document.getElementById('gaugeDisk');
+        var nCpu = document.getElementById('numCpu');
+        var nMem = document.getElementById('numMem');
+        var nDisk = document.getElementById('numDisk');
+        var LEN = 188.5;
+        var vals = { cpu: 23, mem: 41, disk: 57 };
+        if (cpuEl) cpuEl.textContent = cpus[Math.floor(Math.random() * cpus.length)];
+        function paint() {
+            gCpu.style.strokeDashoffset = String(LEN * (1 - vals.cpu / 100));
+            gMem.style.strokeDashoffset = String(LEN * (1 - vals.mem / 100));
+            gDisk.style.strokeDashoffset = String(LEN * (1 - vals.disk / 100));
+            nCpu.textContent = Math.round(vals.cpu) + '%';
+            nMem.textContent = Math.round(vals.mem) + '%';
+            nDisk.textContent = Math.round(vals.disk) + '%';
+        }
+        function tick() {
+            vals.cpu = Math.max(8, Math.min(92, vals.cpu + (Math.random() * 14 - 7)));
+            vals.mem = Math.max(25, Math.min(88, vals.mem + (Math.random() * 6 - 3)));
+            vals.disk = Math.max(30, Math.min(95, vals.disk + (Math.random() * 3 - 1.5)));
+            paint();
+        }
+        paint();
+        setInterval(tick, 1600);
+    })();
+    </script>
+    <script>
+    /* ===== 登录头像替换（全站统一）===== */
+    (function () {
+      fetch('/api/me', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d || !d.loggedIn || !d.username) return;
+          var btn = document.querySelector('.login-btn');
+          if (!btn) return;
+          var name = d.username;
+          var palette = ['#5B8DEF', '#8E6EE8', '#E86E9A', '#E89B6E', '#6EBBA8', '#7BA3E8', '#D27FBF', '#6FB5E0'];
+          var h = 0;
+          for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+          var color = palette[h % palette.length];
+          var a = document.createElement('a');
+          a.href = '/page/profile.html';
+          a.className = 'login-btn';
+          a.title = name;
+          a.style.cssText = 'display:inline-flex;align-items:center;gap:7px;padding:3px 8px 3px 3px;text-decoration:none;';
+          var dot = document.createElement('span');
+          dot.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,' + color + ' 0%,rgba(20,22,35,.9) 100%);color:#fff;font-size:14px;font-weight:700;box-shadow:0 0 0 2px rgba(255,255,255,.22);';
+          dot.textContent = name.charAt(0).toUpperCase();
+          var nm = document.createElement('span');
+          nm.style.cssText = 'font-size:.78rem;color:#e8eaf2;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+          nm.textContent = name;
+          a.appendChild(dot);
+          a.appendChild(nm);
+          btn.replaceWith(a);
+        })
+        .catch(function () {});
+    })();
+    </script>
+</body>
+</html>
