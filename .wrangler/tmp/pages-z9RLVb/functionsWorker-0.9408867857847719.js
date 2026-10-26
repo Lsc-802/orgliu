@@ -1252,7 +1252,7 @@ async function onRequestPost4(context2) {
 }
 __name(onRequestPost4, "onRequestPost");
 
-// ../.wrangler/tmp/pages-4lPF6v/functionsRoutes-0.8551973006765691.mjs
+// ../.wrangler/tmp/pages-z9RLVb/functionsRoutes-0.789399803639186.mjs
 var routes = [
   {
     routePath: "/api/debug-mail",
